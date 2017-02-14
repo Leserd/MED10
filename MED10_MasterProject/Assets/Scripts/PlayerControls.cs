@@ -25,10 +25,10 @@ public class PlayerControls : MonoBehaviour {
             case E_TouchStatus.IDLE:
                 if (selectedTile != null && selectedTile != tile)
                 {
-                    selectedTile.showTileStatus = false;
+                    selectedTile.ToggleShowStatus(false);
                 }
                 selectedTile = tile;
-                selectedTile.showTileStatus = true;
+                selectedTile.ToggleShowStatus(true);
                 break;
             case E_TouchStatus.BUILD:
                 if(tile.TileStatus == E_TileStatus.EMPTY)
