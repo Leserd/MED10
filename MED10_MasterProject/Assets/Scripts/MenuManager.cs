@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour {
 
-    public Button buildBtn;
+    public Button buildBtn, cancelBuildBtn;
     public Canvas menuMain, menuBuild, menuStatistics;
     public static MenuManager instance;
     public E_MenuType ActiveMenu { get; set; }
@@ -14,6 +14,9 @@ public class MenuManager : MonoBehaviour {
     {
         instance = this;
         buildBtn.onClick.AddListener(() => ChangeMenu(E_MenuType.BUILD));
+        cancelBuildBtn.onClick.AddListener(() => PlayerControls.instance.ChangeTouchStatus(E_TouchStatus.IDLE));
+
+        PlayerControls.TouchStatusChange += ToggleCancelButton;
     }
 
 
@@ -36,6 +39,13 @@ public class MenuManager : MonoBehaviour {
         }
     }
 
+    public void ToggleCancelButton(E_TouchStatus status)
+    {
+        if (status == E_TouchStatus.IDLE)
+            cancelBuildBtn.gameObject.SetActive(false);
+        else if (status == E_TouchStatus.BUILD)
+            cancelBuildBtn.gameObject.SetActive(true);
+    }
 
     public void CloseMenues()
     {

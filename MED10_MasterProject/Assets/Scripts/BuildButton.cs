@@ -17,8 +17,7 @@ public class BuildButton : MonoBehaviour {
     private void SetBuildingToBuild()
     {
         BuildManager.BuildingToBuild = building;
-        TileManager.instance.ToggleTileAvailability(true);
-        PlayerControls.instance.TouchStatus = E_TouchStatus.BUILD;
+        PlayerControls.instance.ChangeTouchStatus(E_TouchStatus.BUILD);
         MenuManager.instance.CloseMenues();
     }
 }
