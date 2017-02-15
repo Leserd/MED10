@@ -10,7 +10,7 @@ public class TestButtonScript : MonoBehaviour {
 
     public void ButtonPress()
     {
-        var test = UIData.Instance;
+        var test = UIDataChangeBuildings.Instance;
         Debug.Log(test.AccountBalance);
         test.AccountBalance = int.Parse(inputField.text);
 
