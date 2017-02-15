@@ -26,17 +26,14 @@ public class Tile : MonoBehaviour {
         TileManager.ToggleTileStatus += ToggleShowStatus;
     }
 
-	void OnMouseDown() {
-
-        //showTileStatus = !showTileStatus;
-
-        //Dont detect clicks if user taps button
-        if (!EventSystem.current.IsPointerOverGameObject())
-        {
-            PlayerControls.instance.TouchTile(this);
-        }
+	//void OnMouseDown() {
+ //       //Dont detect clicks if user taps button
+ //       if (!EventSystem.current.IsPointerOverGameObject())
+ //       {
+ //           PlayerControls.instance.TouchTile(this);
+ //       }
         
-    }
+ //   }
 
     public void ChangeTileStatus(E_TileStatus status)
     {
@@ -70,20 +67,6 @@ public class Tile : MonoBehaviour {
         showTileStatus = show;
         highlightPlane.enabled = showTileStatus;
     }
-
-    //void OnDrawGizmos()
-    //{
-    //    //Draw colored square on tile to see tile status
-    //    if (showTileStatus)
-    //    {
-    //        Gizmos.color = colorCurrent;
-
-    //        Gizmos.DrawCube(transform.position + new Vector3(0, 0.1f, 0), new Vector3(1.35f, 0, 1.35f));
-    //    }
-    //    //Draw basic outline on tiles to distinguish borders
-    //    Gizmos.color = Color.black;
-    //    Gizmos.DrawWireCube(transform.position + new Vector3(0, 0.1f, 0), new Vector3(1.5f, 0, 1.5f));
-    //}
 }
 
 public enum E_TileStatus
