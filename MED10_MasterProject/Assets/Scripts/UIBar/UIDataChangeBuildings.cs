@@ -54,7 +54,14 @@ public class UIDataChangeBuildings : MonoBehaviour {
     private static int _food = 0;
     private static int _water = 0;
 
-
+    private void Start()
+    {
+        _accountBalance = int.Parse(AccountData.text);
+        _electricity = int.Parse(ElectricityData.text);
+        _entertainment = int.Parse(EntertainmentData.text);
+        _food = int.Parse(FoodData.text);
+        _water = int.Parse(WaterData.text);
+    }
 
     public int AccountBalance
     {

@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using Script.UIBar;
 
 public class TestButtonScript : MonoBehaviour {
     public Text inputField;
