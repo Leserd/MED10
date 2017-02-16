@@ -7,23 +7,20 @@ public class Tile : MonoBehaviour {
 
     public E_TileStatus TileStatus { get; set; }
     public bool showTileStatus = false;
-
+    private SpriteRenderer sprite;
     private MeshRenderer highlightPlane;
     private Color colorEmpty = Color.green;
     private Color colorFull = Color.red;
-    private Color colorCurrent;
+    private Color colorDefault = Color.white;
+    private Color colorStatus;
 
 	void Awake() {
         TileStatus = E_TileStatus.EMPTY;
-        colorCurrent = colorEmpty;
-        highlightPlane = transform.FindChild("HighlightPlane").GetComponent<MeshRenderer>();
-        if (TileStatus == E_TileStatus.EMPTY)
-            colorCurrent = colorEmpty;
-        else
-            colorCurrent = colorFull;
-        ChangeHighlightColor();
+        colorStatus = colorEmpty;
+        //highlightPlane = transform.FindChild("HighlightPlane").GetComponent<MeshRenderer>();
+        sprite = GetComponent<SpriteRenderer>();
 
-        TileManager.ToggleTileStatus += ToggleShowStatus;
+        TileManager.ToggleTileStatus += ToggleHighlight;
     }
 
 	//void OnMouseDown() {
@@ -40,32 +37,34 @@ public class Tile : MonoBehaviour {
         switch (status)
         {
             case E_TileStatus.EMPTY:
-                colorCurrent = colorEmpty;
+                colorStatus = colorEmpty;
                 TileStatus = E_TileStatus.EMPTY;
                 break;
             case E_TileStatus.FULL:
-                colorCurrent = colorFull;
+                colorStatus = colorFull;
                 TileStatus = E_TileStatus.FULL;
                 break;
         }
-        ChangeHighlightColor();
     }
 
-    public void ChangeHighlightColor()
-    {
-        highlightPlane.material.color = colorCurrent;
-    }
-
-    public void ToggleShowStatus()
+    public void ToggleHighlight()
     {
         showTileStatus = !showTileStatus;
-        highlightPlane.enabled = showTileStatus;
+        //highlightPlane.enabled = showTileStatus;
+        if (showTileStatus)
+            sprite.color = colorStatus;
+        else
+            sprite.color = colorDefault;
     }
 
-    public void ToggleShowStatus(bool show)
+    public void ToggleHighlight(bool show)
     {
         showTileStatus = show;
-        highlightPlane.enabled = showTileStatus;
+        //highlightPlane.enabled = showTileStatus;
+        if (showTileStatus)
+            sprite.color = colorStatus;
+        else
+            sprite.color = colorDefault;
     }
 }
 

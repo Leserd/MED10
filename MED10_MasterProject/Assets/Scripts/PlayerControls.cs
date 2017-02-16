@@ -7,13 +7,14 @@ using UnityEngine.EventSystems;
 public class PlayerControls : MonoBehaviour {
 
     public static PlayerControls instance;
+    public GameObject testSprite;
     public E_TouchStatus TouchStatus { get; set; }
     public delegate void D_ChangeTouchStatus(E_TouchStatus status);
     public static event D_ChangeTouchStatus TouchStatusChange;
     private Tile selectedTile;
     private Camera cam;
-    private Vector2 touchPosBegin, touchPosCurrent;
-    private const float TOUCH_MOVE_DIST_THRESHOLD = 0.75f;
+    private Vector2 touchPosBegin, touchPosCurrent, touchPosLast;
+    private const float TOUCH_MOVE_DIST_THRESHOLD = 0.9f;
     private bool swiping = false;
 
     private void Awake()
@@ -31,86 +32,120 @@ public class PlayerControls : MonoBehaviour {
     private void DetectTouch()
     {
 
-#if UNITY_ANDROID
-        if(Input.touchCount > 2)
+
+        if (!EventSystem.current.IsPointerOverGameObject())
         {
-            //Zoom the camera
-        }
-        else if (Input.touchCount == 1)
-        {
-            if (Input.GetTouch(0).phase == TouchPhase.Began)
+#if UNITY_EDITOR
+            if (Input.GetMouseButtonDown(0))
             {
-                swiping = false;
-                touchPosBegin = Input.GetTouch(0).position;
+                TouchBegin();
             }
-            else if (Input.GetTouch(0).phase == TouchPhase.Ended)
+            else if (Input.GetMouseButtonUp(0))
             {
-                if (Vector2.Distance(touchPosBegin, Input.GetTouch(0).position) < TOUCH_MOVE_DIST_THRESHOLD && swiping != true)
+                TouchEnd();
+            }
+
+            else if (Input.GetMouseButton(0))
+            {
+                TouchSwipe();
+            }
+
+#elif UNITY_ANDROID
+            if (Input.touchCount > 2)
+            {
+                //Zoom the camera
+            }
+            else if (Input.touchCount == 1)
+            {
+                if (Input.GetTouch(0).phase == TouchPhase.Began)
                 {
-                    // Construct a ray from the current touch coordinates
-                    Ray touchRay = cam.ScreenPointToRay(Input.GetTouch(0).position);
-                    RaycastHit touchHit = new RaycastHit();
-                    // Create a particle if hit
-                    if (Physics.Raycast(touchRay, out touchHit))
-                    {
-                        if (touchHit.transform.tag == "Tile")
-                        {
-                            if (!EventSystem.current.IsPointerOverGameObject())
-                                TouchTile(touchHit.transform.GetComponent<Tile>());
-                        }
-                    }
+                    TouchBegin();
+                }
+                else if (Input.GetTouch(0).phase == TouchPhase.Ended)
+                {
+                    TouchEnd();
+                }
+                else if (Input.GetTouch(0).phase == TouchPhase.Moved)
+                {
+                    TouchSwipe();
                 }
             }
-            else if (Input.GetTouch(0).phase == TouchPhase.Moved)
-            {
-                //Pan camera
-                touchPosCurrent = Input.GetTouch(0).position;
-                if (Vector2.Distance(touchPosBegin, touchPosCurrent) > TOUCH_MOVE_DIST_THRESHOLD)
-                {
-                    print("Moving");
-                    swiping = true;
-                }
-            }
-        }
 
 #endif
-
-
-#if UNITY_EDITOR
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            swiping = false;
-            touchPosBegin = Input.mousePosition;
         }
-        else if (Input.GetMouseButtonUp(0)) { 
-            if(Vector2.Distance(touchPosBegin, Input.mousePosition) < TOUCH_MOVE_DIST_THRESHOLD && swiping != true)
-            {
-                Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-                RaycastHit mouseHit;
+    }
 
-                if (Physics.Raycast(ray, out mouseHit))
+
+    private void TouchBegin()
+    {
+#if UNITY_EDITOR     
+        touchPosBegin = Input.mousePosition;
+#elif UNITY_ANDROID
+        touchPosBegin = Input.GetTouch(0).position;
+#endif
+        touchPosLast = touchPosBegin;
+        swiping = false;
+    }
+
+
+    private void TouchSwipe()
+    {
+#if UNITY_EDITOR
+        //pan camera
+        touchPosCurrent = Input.mousePosition;
+
+#elif UNITY_ANDROID
+        //Pan camera
+        touchPosCurrent = Input.GetTouch(0).position;
+#endif
+
+        if (Vector2.Distance(touchPosBegin, touchPosCurrent) > TOUCH_MOVE_DIST_THRESHOLD)
+        {
+            print("Moving");
+            
+            if (swiping == true)
+            {
+                Vector2 dist = touchPosLast - touchPosCurrent;
+                cam.transform.position = Vector3.Lerp(cam.transform.position, cam.transform.position + new Vector3(dist.x, dist.y, 0), Time.deltaTime * 2);
+            }
+            swiping = true;
+
+        }
+        touchPosLast = touchPosCurrent;
+    }
+
+
+
+    private void TouchEnd()
+    {
+        Vector2 touchPos;
+#if UNITY_EDITOR
+        touchPos = Input.mousePosition;
+#elif UNITY_ANDROID
+        touchPos = Input.GetTouch(0).position;
+#endif
+
+        if (Vector2.Distance(touchPosBegin, touchPos) < TOUCH_MOVE_DIST_THRESHOLD && swiping != true)
+        {
+            Ray mouseRay = cam.ScreenPointToRay(touchPos);
+            RaycastHit2D mouseHit = Physics2D.GetRayIntersection(mouseRay);
+            if (mouseHit.collider != null)
+            {
+                if (mouseHit.transform.tag == "Tile")
                 {
-                    if (mouseHit.transform.tag == "Tile")
-                    {
-                        if (!EventSystem.current.IsPointerOverGameObject())
-                            TouchTile(mouseHit.transform.GetComponent<Tile>());
-                    }
+                    TouchTile(mouseHit.transform.GetComponent<Tile>());
                 }
             }
+            else
+                print("NOTHING WAS HIT!");
         }
+    }
 
-        else if (Input.GetMouseButton(0))
-        {
-            //pan camera
-            touchPosCurrent = Input.mousePosition;
-            if(Vector2.Distance(touchPosBegin, touchPosCurrent) > TOUCH_MOVE_DIST_THRESHOLD)
-            {
-                print("Moving");
-                swiping = true;
-            }
-        }
 
+    private void TouchZoom()
+    {
+#if UNITY_ANDROID
+        //Zoom the camera
 #endif
     }
 
@@ -121,10 +156,10 @@ public class PlayerControls : MonoBehaviour {
             case E_TouchStatus.IDLE:
                 if (selectedTile != null && selectedTile != tile)
                 {
-                    selectedTile.ToggleShowStatus(false);
+                    selectedTile.ToggleHighlight(false);
                 }
                 selectedTile = tile;
-                selectedTile.ToggleShowStatus(true);
+                selectedTile.ToggleHighlight(true);
                 break;
             case E_TouchStatus.BUILD:
                 if(tile.TileStatus == E_TileStatus.EMPTY)
@@ -132,7 +167,6 @@ public class PlayerControls : MonoBehaviour {
                     BuildManager.instance.BuildOnTile(tile);
 
                     ChangeTouchStatus(E_TouchStatus.IDLE);
-                    
                 }
                 break;
         }
@@ -154,7 +188,6 @@ public class PlayerControls : MonoBehaviour {
                 break;
         }
     }
-
 }
 
 public enum E_TouchStatus
