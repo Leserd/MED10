@@ -7,15 +7,25 @@ using UnityEngine.EventSystems;
 public class PlayerControls : MonoBehaviour {
 
     public static PlayerControls instance;
-    public GameObject testSprite;
-    public E_TouchStatus TouchStatus { get; set; }
+    private Tile selectedTile;
+
+    //****Event variables
     public delegate void D_ChangeTouchStatus(E_TouchStatus status);
     public static event D_ChangeTouchStatus TouchStatusChange;
-    private Tile selectedTile;
-    private Camera cam;
+
+    //****Touch variables
+    public E_TouchStatus TouchStatus { get; set; }
     private Vector2 touchPosBegin, touchPosCurrent, touchPosLast;
     private const float TOUCH_MOVE_DIST_THRESHOLD = 0.9f;
     private bool swiping = false;
+
+    //****Camera variables
+    private Camera cam;
+    private const float CAM_MAX_Y = 4;
+    private const float CAM_MIN_Y = -3;
+    private const float CAM_MAX_X = 18;
+    private const float CAM_MIN_X = 2;
+
 
     private void Awake()
     {
@@ -118,16 +128,16 @@ public class PlayerControls : MonoBehaviour {
 
     private void TouchEnd()
     {
-        Vector2 touchPos;
+
 #if UNITY_EDITOR
-        touchPos = Input.mousePosition;
+        touchPosCurrent = Input.mousePosition;
 #elif UNITY_ANDROID
-        touchPos = Input.GetTouch(0).position;
+        touchPosCurrent = Input.GetTouch(0).position;
 #endif
 
-        if (Vector2.Distance(touchPosBegin, touchPos) < TOUCH_MOVE_DIST_THRESHOLD && swiping != true)
+        if (Vector2.Distance(touchPosBegin, touchPosCurrent) < TOUCH_MOVE_DIST_THRESHOLD && swiping != true)
         {
-            Ray mouseRay = cam.ScreenPointToRay(touchPos);
+            Ray mouseRay = cam.ScreenPointToRay(touchPosCurrent);
             RaycastHit2D mouseHit = Physics2D.GetRayIntersection(mouseRay);
             if (mouseHit.collider != null)
             {
@@ -164,7 +174,7 @@ public class PlayerControls : MonoBehaviour {
             case E_TouchStatus.BUILD:
                 if(tile.TileStatus == E_TileStatus.EMPTY)
                 {
-                    BuildManager.instance.BuildOnTile(tile);
+                    tile.BuildOnTile();
 
                     ChangeTouchStatus(E_TouchStatus.IDLE);
                 }

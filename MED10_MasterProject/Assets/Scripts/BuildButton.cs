@@ -12,9 +12,10 @@ public class BuildButton : MonoBehaviour {
     {
         btn = GetComponent<Button>();
         btn.onClick.AddListener(() => SetBuildingToBuild());
+       
     }
 
-    private void SetBuildingToBuild()
+    public void SetBuildingToBuild()
     {
         BuildManager.BuildingToBuild = building;
         PlayerControls.instance.ChangeTouchStatus(E_TouchStatus.BUILD);

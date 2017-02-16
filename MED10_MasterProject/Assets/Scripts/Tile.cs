@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 public class Tile : MonoBehaviour {
 
     public E_TileStatus TileStatus { get; set; }
+    private Building attachedBuilding;
     public bool showTileStatus = false;
     private SpriteRenderer sprite;
     private MeshRenderer highlightPlane;
@@ -65,6 +66,13 @@ public class Tile : MonoBehaviour {
             sprite.color = colorStatus;
         else
             sprite.color = colorDefault;
+    }
+
+    public void BuildOnTile()
+    {
+        attachedBuilding = Instantiate(BuildManager.BuildingToBuild, transform.position + BuildManager.buildingOffset, Quaternion.identity).GetComponent<Building>();
+        attachedBuilding.GetComponent<SpriteRenderer>().sortingOrder = GetComponent<SpriteRenderer>().sortingOrder + 1;
+        ChangeTileStatus(E_TileStatus.FULL);
     }
 }
 
