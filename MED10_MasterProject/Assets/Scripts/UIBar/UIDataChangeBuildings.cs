@@ -16,7 +16,6 @@ public class UIDataChangeBuildings : MonoBehaviour {
         else
         {
             instance = this;
-            DontDestroyOnLoad(this);
         }
     }
     public static UIDataChangeBuildings Instance
@@ -74,7 +73,7 @@ public class UIDataChangeBuildings : MonoBehaviour {
         set
         {
            
-           _accountBalance -= value;
+           _accountBalance += value;
            AccountData.text = _accountBalance.ToString();
         }
 
@@ -89,7 +88,7 @@ public class UIDataChangeBuildings : MonoBehaviour {
         }
         set
         {
-            _electricity -= value;
+            _electricity += value;
             ElectricityData.text = _electricity.ToString();
         }
 
@@ -104,7 +103,7 @@ public class UIDataChangeBuildings : MonoBehaviour {
         }
         set
         {
-            _entertainment -= value;
+            _entertainment += value;
             EntertainmentData.text = _entertainment.ToString();
         }
 
@@ -119,7 +118,7 @@ public class UIDataChangeBuildings : MonoBehaviour {
         }
         set
         {
-            _food -= value;
+            _food += value;
             FoodData.text = _food.ToString();
         }
 
@@ -134,7 +133,7 @@ public class UIDataChangeBuildings : MonoBehaviour {
         }
         set
         {
-            _water -= value;
+            _water += value;
             WaterData.text = _water.ToString();
         }
 
