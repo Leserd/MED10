@@ -7,13 +7,12 @@ public class BuyBuilding : MonoBehaviour {
 
     public Sprite BuildingSprite;
     public string Name;
-    public int IncomeAmount;
-    public int Target;
+
 
 
 
     [SerializeField]
-    int AccountCost, ElectricityCost, ClothingCost, EntertainmentCost, WaterCost,FoodCost =0;
+    int IncomeAmount,Target, AccountCost, ElectricityCost, ClothingCost, EntertainmentCost, WaterCost,FoodCost;
 
 
 
