@@ -25,6 +25,7 @@ public class PlayerControls : MonoBehaviour {
     private const float CAM_MIN_Y = -3;
     private const float CAM_MAX_X = 18;
     private const float CAM_MIN_X = 2;
+    private const float CAM_DRAG_SPEED = 150;
 
 
     private void Awake()
@@ -111,12 +112,39 @@ public class PlayerControls : MonoBehaviour {
 
         if (Vector2.Distance(touchPosBegin, touchPosCurrent) > TOUCH_MOVE_DIST_THRESHOLD)
         {
-            print("Moving");
+            //print("Moving");
             
             if (swiping == true)
             {
-                Vector2 dist = touchPosLast - touchPosCurrent;
-                cam.transform.position = Vector3.Lerp(cam.transform.position, cam.transform.position + new Vector3(dist.x, dist.y, 0), Time.deltaTime * 2);
+                Vector3 lastTouch = cam.ScreenToWorldPoint(touchPosLast);
+                Vector3 curTouch = cam.ScreenToWorldPoint(touchPosCurrent);
+
+                Vector3 dist = lastTouch - curTouch;
+                dist.z = 0;
+
+                //Clamp camera movement 
+                if(dist.y > 0 && cam.transform.position.y >= CAM_MAX_Y) //dragging up
+                {
+                    dist.y = 0;
+                    cam.transform.position = new Vector3(cam.transform.position.x, CAM_MAX_Y, cam.transform.position.z);
+                }
+                if (dist.x > 0 && cam.transform.position.x >= CAM_MAX_X) //dragging right
+                {
+                    dist.x = 0;
+                    cam.transform.position = new Vector3(CAM_MAX_X, cam.transform.position.y, cam.transform.position.z);
+                }
+                if (dist.y < 0 && cam.transform.position.y <= CAM_MIN_Y) //dragging down
+                {
+                    dist.y = 0;
+                    cam.transform.position = new Vector3(cam.transform.position.x, CAM_MIN_Y, cam.transform.position.z);
+                }
+                if (dist.x < 0 && cam.transform.position.x <= CAM_MIN_X) //dragging left
+                {
+                    dist.x = 0;
+                    cam.transform.position = new Vector3(CAM_MIN_X, cam.transform.position.y, cam.transform.position.z);
+                }
+
+                cam.transform.position = Vector3.Lerp(cam.transform.position, cam.transform.position + dist, Time.deltaTime * CAM_DRAG_SPEED);
             }
             swiping = true;
 
