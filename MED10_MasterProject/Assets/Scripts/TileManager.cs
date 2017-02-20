@@ -37,6 +37,7 @@ public class TileManager : MonoBehaviour {
                     (y * TILE_GRID_Y_DIST / 2) - (x * TILE_GRID_Y_DIST / 2), 0);
                 renderOrder++;
                 SpriteRenderer tile = Instantiate(tilePrefab2D, pos, Quaternion.identity).GetComponent<SpriteRenderer>();
+                tile.transform.SetParent(gameObject.transform);
                 tile.sortingOrder = renderOrder;
             }
         }
