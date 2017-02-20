@@ -7,6 +7,8 @@ public class CreateBuilding : MonoBehaviour {
 
     public GameObject BuildingPrefab;
 
+
+
     private static CreateBuilding instance = null;
     private void Awake()
     {

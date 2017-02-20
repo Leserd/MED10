@@ -16,10 +16,10 @@ public class BuyElectricityBuilding : MonoBehaviour {
     public void ButtonPress()
     {
         var uiBar = UIDataChangeBuildings.Instance;
-        uiBar.AccountBalance = -_accountCost;
+        uiBar.Account = -_accountCost;
         uiBar.Water = -_waterCost;
         var test = CreateBuilding.Instance;
-        test.SetupBuilding("ElectricityBuilding", electricityIncome, ElectricitySprite, 1);
+        test.SetupBuilding("ElectricityBuilding", electricityIncome, ElectricitySprite, 2);
     }
 
 

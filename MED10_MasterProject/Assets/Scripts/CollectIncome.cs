@@ -13,9 +13,9 @@ public class CollectIncome : MonoBehaviour {
     }
 
 
+
     public void OnButtonClick()
     {
-        Debug.Log(income);
         if(gameObject.GetComponent<Image>().fillAmount > 0.99f)
         {
             var UIBar = UIDataChangeBuildings.Instance;
@@ -23,14 +23,37 @@ public class CollectIncome : MonoBehaviour {
             switch (targetSource)
             {
 
-                case 2:
-                    //food
-                    UIBar.Food = income;
-                    break;
                 case 1:
+                    //account
+                    UIBar.Account = income;
+                    break;
+
+                case 2:
                     //electricity
                     UIBar.Electricity = income;
                     break;
+
+                case 3:
+                    //clothing
+                    UIBar.Clothing = income;
+                    break;
+
+                case 4:
+                    //entertainment
+                    UIBar.Entertainment = income;
+                    break;
+
+                case 5:
+                    //water
+                    UIBar.Water = income;
+                    break;               
+
+                case 6:
+                    //food
+                    UIBar.Food = income;
+                    break;
+
+
 
                 default:
                     Debug.Log(targetSource + " is not a possible target");
@@ -43,3 +66,4 @@ public class CollectIncome : MonoBehaviour {
         }
     }
 }
+
