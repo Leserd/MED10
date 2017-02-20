@@ -51,7 +51,8 @@ public class PlayerControls : MonoBehaviour
     private void DetectTouch()
     {
 
-        if (!EventSystem.current.IsPointerOverGameObject() && !IsPointerOverUIObject())
+        //if (!EventSystem.current.IsPointerOverGameObject() && !IsPointerOverUIObject())
+        if (!IsPointerOverUIObject())
         {
             if (GameManager.IsApp)
             {
@@ -90,6 +91,12 @@ public class PlayerControls : MonoBehaviour
                     TouchSwipe();
                 }
             }
+        }
+        else
+        {
+            touchPosBegin[0] = Vector2.zero;
+            touchPosCurrent[0] = Vector2.zero;
+            touchPosLast[0] = Vector2.zero;
         }
     }
 
@@ -268,6 +275,12 @@ public class PlayerControls : MonoBehaviour
                 }
                 break;
         }
+    }
+
+    public void ClearTileSelection()
+    {
+        selectedTile.ToggleHighlight(false);
+        selectedTile = null;
     }
 
     public void ChangeTouchStatus(E_TouchStatus status)
