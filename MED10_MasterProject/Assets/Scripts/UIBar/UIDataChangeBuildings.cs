@@ -129,15 +129,12 @@ public class UIDataChangeBuildings : MonoBehaviour {
     {
         get
         {
-            Debug.Log("was in get water");
-
             int.TryParse(WaterData.text, out _water);
             return _water;
 
         }
         set
         {
-            Debug.Log(" water" + _water);
             _water += value;
             WaterData.text = _water.ToString();
         }
@@ -147,7 +144,6 @@ public class UIDataChangeBuildings : MonoBehaviour {
     {
         get
         {
-            Debug.Log("was in get clothing");
             int.TryParse(ClothingData.text, out _clothing);
             return _clothing;
 
