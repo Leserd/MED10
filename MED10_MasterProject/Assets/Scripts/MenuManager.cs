@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour {
 
-    public Button buildBtn, cancelBuildBtn;
+    public Button buildBtn;
+    public Button[] cancelBuildBtn;
     public Canvas menuMain, menuBuild, menuStatistics;
     public static MenuManager instance;
     public E_MenuType ActiveMenu { get; set; }
@@ -14,7 +15,11 @@ public class MenuManager : MonoBehaviour {
     {
         instance = this;
         buildBtn.onClick.AddListener(() => ChangeMenu(E_MenuType.BUILD));
-        cancelBuildBtn.onClick.AddListener(() => PlayerControls.instance.ChangeTouchStatus(E_TouchStatus.IDLE));
+
+        foreach(Button btn in cancelBuildBtn)
+        {
+            btn.onClick.AddListener(() => PlayerControls.instance.ChangeTouchStatus(E_TouchStatus.IDLE));
+        }
 
         PlayerControls.TouchStatusChange += ToggleCancelButton;
     }
@@ -39,12 +44,14 @@ public class MenuManager : MonoBehaviour {
         }
     }
 
+    //Toggles the cancel button that appears while user is selecting the spot to place building. Must be at index 0 in cancelBuildBtn array
+    //TODO: Make the Build button turn into a Cancel button when pressed. And put in front of the BuildMenu canvas
     public void ToggleCancelButton(E_TouchStatus status)
     {
         if (status == E_TouchStatus.IDLE)
-            cancelBuildBtn.gameObject.SetActive(false);
+            cancelBuildBtn[0].gameObject.SetActive(false);
         else if (status == E_TouchStatus.BUILD)
-            cancelBuildBtn.gameObject.SetActive(true);
+            cancelBuildBtn[0].gameObject.SetActive(true);
     }
 
     public void CloseMenues()
