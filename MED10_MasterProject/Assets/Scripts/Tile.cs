@@ -71,8 +71,11 @@ public class Tile : MonoBehaviour {
     public void BuildOnTile()
     {
         attachedBuilding = Instantiate(BuildManager.BuildingToBuild, transform.position + BuildManager.buildingOffset, Quaternion.identity).GetComponent<Building>();
+        attachedBuilding.transform.SetParent(CreateBuilding.Instance.transform);
         attachedBuilding.GetComponent<SpriteRenderer>().sortingOrder = GetComponent<SpriteRenderer>().sortingOrder + 1;
         ChangeTileStatus(E_TileStatus.FULL);
+        attachedBuilding.GetComponent<BuyBuilding>().ButtonPress(attachedBuilding.transform);
+
     }
 }
 

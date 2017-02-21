@@ -14,19 +14,14 @@ public class BuyBuilding : MonoBehaviour {
     [SerializeField]
     int IncomeAmount=0,Target=0, AccountCost=0, ElectricityCost=0, ClothingCost=0, EntertainmentCost=0, WaterCost=0,FoodCost=0;
 
-    private void Awake()
+
+
+
+
+
+    public void ButtonPress(Transform parentTransform)
     {
 
-        PlayerControls.TouchStatusChange += ButtonPress;  
-    }
-
-
-
-
-    public void ButtonPress(E_TouchStatus status)
-    {
-        if (status == E_TouchStatus.IDLE)
-        {
             var uiBar = UIDataChangeBuildings.Instance;
             uiBar.Account = -AccountCost;
             uiBar.Electricity = -ElectricityCost;
@@ -37,8 +32,8 @@ public class BuyBuilding : MonoBehaviour {
 
 
             var createBuilding = CreateBuilding.Instance;
-            createBuilding.SetupBuilding(Name, IncomeAmount, BuildingSprite, Target);
-        }
+            createBuilding.SetupBuilding(Name, IncomeAmount, BuildingSprite, Target, parentTransform);
+        
     }
 
 
