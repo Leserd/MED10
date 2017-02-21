@@ -6,10 +6,11 @@ using UnityEngine.UI;
 public class CollectIncome : MonoBehaviour {
     public int income;
     public int targetSource = 2;
+    public float timeToUpdate = 0f;
 
     private void Update()
     {
-        gameObject.GetComponent<Image>().fillAmount += Time.deltaTime;
+        gameObject.GetComponent<Image>().fillAmount += (Time.fixedDeltaTime/timeToUpdate);
     }
 
 

@@ -36,7 +36,7 @@ public class CreateBuilding : MonoBehaviour {
 
 
 //TODO is missing a way to diffirentiate between different income targets
-    public  void SetupBuilding(string buildingName, int incomeAmount, Sprite buildingImage, int target, Transform parentTransform)
+    public  void SetupBuilding(string buildingName, int incomeAmount, Sprite buildingImage, int target, Transform parentTransform , float timeToUpdate)
     {
         var buildingClone = Instantiate(BuildingPrefab, gameObject.transform, false);
         buildingClone.transform.SetParent(parentTransform);
@@ -49,6 +49,7 @@ public class CreateBuilding : MonoBehaviour {
         var collectIncomeScript = buildingClone.GetComponentInChildren<CollectIncome>();
         collectIncomeScript.income = incomeAmount;
         collectIncomeScript.targetSource = target;
+        collectIncomeScript.timeToUpdate = timeToUpdate;
 
 
 
