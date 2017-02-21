@@ -11,9 +11,5 @@ public class BuildManager : MonoBehaviour {
     private void Awake()
     {
         instance = this;
-    }
-
-   
-
-    
+    }   
 }

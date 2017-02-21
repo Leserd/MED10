@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class UIDataChangeBuildings : MonoBehaviour {
@@ -38,20 +36,23 @@ public class UIDataChangeBuildings : MonoBehaviour {
         }
     }
 
-
-
     public Text AccountData;
     public Text ElectricityData;
+    public Text ClothingData;
     public Text EntertainmentData;
-    public Text FoodData;
     public Text WaterData;
+    public Text FoodData;
+
+
 
 
     private static int _accountBalance = 0;
     private static int _electricity = 0;
+    private static int _clothing = 0;
     private static int _entertainment = 0;
-    private static int _food = 0;
     private static int _water = 0;
+    private static int _food = 0;
+
 
     private void Start()
     {
@@ -60,9 +61,10 @@ public class UIDataChangeBuildings : MonoBehaviour {
         _entertainment = int.Parse(EntertainmentData.text);
         _food = int.Parse(FoodData.text);
         _water = int.Parse(WaterData.text);
+        _clothing = int.Parse(ClothingData.text);
     }
 
-    public int AccountBalance
+    public int Account
     {
         get
         {
@@ -135,6 +137,21 @@ public class UIDataChangeBuildings : MonoBehaviour {
         {
             _water += value;
             WaterData.text = _water.ToString();
+        }
+
+    }
+    public int Clothing
+    {
+        get
+        {
+            int.TryParse(ClothingData.text, out _clothing);
+            return _clothing;
+
+        }
+        set
+        {
+            _clothing += value;
+            ClothingData.text = _clothing.ToString();
         }
 
     }
