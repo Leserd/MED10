@@ -16,11 +16,6 @@ public class MenuManager : MonoBehaviour {
         instance = this;
         buildBtn.onClick.AddListener(() => ChangeMenu(E_MenuType.BUILD));
 
-        foreach(Button btn in cancelBuildBtn)
-        {
-            btn.onClick.AddListener(() => PlayerControls.instance.ChangeTouchStatus(E_TouchStatus.IDLE));
-        }
-
         PlayerControls.TouchStatusChange += ToggleCancelButton;
     }
 

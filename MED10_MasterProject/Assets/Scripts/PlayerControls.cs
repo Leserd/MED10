@@ -9,6 +9,7 @@ public class PlayerControls : MonoBehaviour
 
     public static PlayerControls instance;
     private Tile selectedTile;
+    public static Tile hoveredTile { get; set; }       //Tile that the player is currently touching while dragging finger/mouse on screen
 
 
     //****Event variables
@@ -43,10 +44,12 @@ public class PlayerControls : MonoBehaviour
         touchPosLast = new Vector2[2];
     }
 
+
     private void Update()
     {
         DetectTouch();
     }
+
 
     private void DetectTouch()
     {
@@ -158,7 +161,25 @@ public class PlayerControls : MonoBehaviour
     private void TouchEnd()
     {
         //print("End");
-        if (Vector2.Distance(touchPosBegin[0], touchPosCurrent[0]) < TOUCH_MOVE_DIST_THRESHOLD && swiping != true)
+        hoveredTile = null;
+        if(TouchStatus == E_TouchStatus.IDLE)
+        {
+            if (Vector2.Distance(touchPosBegin[0], touchPosCurrent[0]) < TOUCH_MOVE_DIST_THRESHOLD && swiping != true)
+            {
+                Ray mouseRay = cam.ScreenPointToRay(touchPosCurrent[0]);
+                RaycastHit2D mouseHit = Physics2D.GetRayIntersection(mouseRay);
+                if (mouseHit.collider != null)
+                {
+                    if (mouseHit.transform.tag == "Tile")
+                    {
+                        TouchTile(mouseHit.transform.GetComponent<Tile>());
+                    }
+                }
+                else
+                    print("NOTHING WAS HIT!");
+            }
+        }
+        else
         {
             Ray mouseRay = cam.ScreenPointToRay(touchPosCurrent[0]);
             RaycastHit2D mouseHit = Physics2D.GetRayIntersection(mouseRay);
@@ -172,59 +193,74 @@ public class PlayerControls : MonoBehaviour
             else
                 print("NOTHING WAS HIT!");
         }
+        
     }
 
 
     private void TouchDrag()
     {
-        if (Vector2.Distance(touchPosBegin[0], touchPosCurrent[0]) > TOUCH_MOVE_DIST_THRESHOLD)
+        Ray mouseRay = cam.ScreenPointToRay(touchPosCurrent[0]);
+        RaycastHit2D mouseHit = Physics2D.GetRayIntersection(mouseRay);
+        if (mouseHit.collider != null)
         {
-            //print("Moving");
-
-            if (swiping == true)
+            if (mouseHit.transform.tag == "Tile")
             {
-                Vector3 lastTouch = cam.ScreenToWorldPoint(touchPosLast[0]);
-                Vector3 curTouch = cam.ScreenToWorldPoint(touchPosCurrent[0]);
-
-                Vector3 dist = lastTouch - curTouch;
-                dist.z = 0;
-
-                //Clamp camera movement 
-                if (dist.y > 0 && cam.transform.position.y >= CAM_MAX_Y) //dragging up
-                {
-                    dist.y = 0;
-                    cam.transform.position = new Vector3(cam.transform.position.x, CAM_MAX_Y, cam.transform.position.z);
-                }
-                if (dist.x > 0 && cam.transform.position.x >= CAM_MAX_X) //dragging right
-                {
-                    dist.x = 0;
-                    cam.transform.position = new Vector3(CAM_MAX_X, cam.transform.position.y, cam.transform.position.z);
-                }
-                if (dist.y < 0 && cam.transform.position.y <= CAM_MIN_Y) //dragging down
-                {
-                    dist.y = 0;
-                    cam.transform.position = new Vector3(cam.transform.position.x, CAM_MIN_Y, cam.transform.position.z);
-                }
-                if (dist.x < 0 && cam.transform.position.x <= CAM_MIN_X) //dragging left
-                {
-                    dist.x = 0;
-                    cam.transform.position = new Vector3(CAM_MIN_X, cam.transform.position.y, cam.transform.position.z);
-                }
-
-                cam.transform.position = Vector3.Lerp(cam.transform.position, cam.transform.position + dist, Time.deltaTime * CAM_DRAG_SPEED);
+                hoveredTile = mouseHit.transform.GetComponent<Tile>();
             }
-            swiping = true;
-            touchPosLast[0] = touchPosCurrent[0];
+        }
+        else
+        {
+            hoveredTile = null;
+        }
+
+
+        if (TouchStatus == E_TouchStatus.IDLE)
+        {
+            if (Vector2.Distance(touchPosBegin[0], touchPosCurrent[0]) > TOUCH_MOVE_DIST_THRESHOLD)
+            {
+                //print("Moving");
+
+                if (swiping == true)
+                {
+                    Vector3 lastTouch = cam.ScreenToWorldPoint(touchPosLast[0]);
+                    Vector3 curTouch = cam.ScreenToWorldPoint(touchPosCurrent[0]);
+
+                    Vector3 dist = lastTouch - curTouch;
+                    dist.z = 0;
+
+                    //Clamp camera movement 
+                    if (dist.y > 0 && cam.transform.position.y >= CAM_MAX_Y) //dragging up
+                    {
+                        dist.y = 0;
+                        cam.transform.position = new Vector3(cam.transform.position.x, CAM_MAX_Y, cam.transform.position.z);
+                    }
+                    if (dist.x > 0 && cam.transform.position.x >= CAM_MAX_X) //dragging right
+                    {
+                        dist.x = 0;
+                        cam.transform.position = new Vector3(CAM_MAX_X, cam.transform.position.y, cam.transform.position.z);
+                    }
+                    if (dist.y < 0 && cam.transform.position.y <= CAM_MIN_Y) //dragging down
+                    {
+                        dist.y = 0;
+                        cam.transform.position = new Vector3(cam.transform.position.x, CAM_MIN_Y, cam.transform.position.z);
+                    }
+                    if (dist.x < 0 && cam.transform.position.x <= CAM_MIN_X) //dragging left
+                    {
+                        dist.x = 0;
+                        cam.transform.position = new Vector3(CAM_MIN_X, cam.transform.position.y, cam.transform.position.z);
+                    }
+
+                    cam.transform.position = Vector3.Lerp(cam.transform.position, cam.transform.position + dist, Time.deltaTime * CAM_DRAG_SPEED);
+                }
+                swiping = true;
+                touchPosLast[0] = touchPosCurrent[0];
+            }
         }
     }
 
+
     private void TouchZoom()
     {
-        //Zoom the camera
-        //if(Vector2.Distance(touchPosBegin[0], touchPosCurrent[0]) > TOUCH_MOVE_DIST_THRESHOLD ||
-        //    Vector2.Distance(touchPosBegin[1], touchPosCurrent[1]) > TOUCH_MOVE_DIST_THRESHOLD)
-        //{
-
         Vector3[] lastTouch = new Vector3[2];
         Vector3[] curTouch = new Vector3[2];
 
@@ -250,7 +286,6 @@ public class PlayerControls : MonoBehaviour
 
         touchPosLast[0] = touchPosCurrent[0];
         touchPosLast[1] = touchPosCurrent[1];
-        // }
     }
 
 
@@ -269,7 +304,7 @@ public class PlayerControls : MonoBehaviour
             case E_TouchStatus.BUILD:
                 if (tile.TileStatus == E_TileStatus.EMPTY)
                 {
-                    tile.BuildOnTile();
+                    BuildManager.BuildingToBuild.GetComponent<Building>().BuildOnTile();
 
                     ChangeTouchStatus(E_TouchStatus.IDLE);
                 }
@@ -277,11 +312,13 @@ public class PlayerControls : MonoBehaviour
         }
     }
 
+
     public void ClearTileSelection()
     {
         selectedTile.ToggleHighlight(false);
         selectedTile = null;
     }
+
 
     public void ChangeTouchStatus(E_TouchStatus status)
     {
@@ -300,6 +337,7 @@ public class PlayerControls : MonoBehaviour
         }
         MenuManager.instance.CloseMenues();
     }
+
 
     //Substitute function for IsPointerOverGameObject, as it does not work with touch
     private bool IsPointerOverUIObject()

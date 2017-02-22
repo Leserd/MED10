@@ -24,14 +24,6 @@ public class Tile : MonoBehaviour {
         TileManager.ToggleTileStatus += ToggleHighlight;
     }
 
-	//void OnMouseDown() {
- //       //Dont detect clicks if user taps button
- //       if (!EventSystem.current.IsPointerOverGameObject())
- //       {
- //           PlayerControls.instance.TouchTile(this);
- //       }
-        
- //   }
 
     public void ChangeTileStatus(E_TileStatus status)
     {
@@ -68,11 +60,9 @@ public class Tile : MonoBehaviour {
             sprite.color = colorDefault;
     }
 
-    public void BuildOnTile()
+    public void AssignBuilding(Building building)
     {
-        attachedBuilding = Instantiate(BuildManager.BuildingToBuild, transform.position + BuildManager.buildingOffset, Quaternion.identity).GetComponent<Building>();
-        attachedBuilding.GetComponent<SpriteRenderer>().sortingOrder = GetComponent<SpriteRenderer>().sortingOrder + 1;
-        ChangeTileStatus(E_TileStatus.FULL);
+        attachedBuilding = building;
     }
 }
 
