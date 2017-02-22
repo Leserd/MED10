@@ -97,9 +97,18 @@ public class PlayerControls : MonoBehaviour
         }
         else
         {
-            touchPosBegin[0] = Vector2.zero;
-            touchPosCurrent[0] = Vector2.zero;
-            touchPosLast[0] = Vector2.zero;
+            Vector2 pos = Vector2.zero;
+            if (GameManager.IsApp)
+            {
+                pos = Input.GetTouch(0).position;
+            }
+            else
+            {
+                pos = Input.mousePosition;
+            }
+            touchPosBegin[0] = pos;
+            touchPosCurrent[0] = pos;
+            touchPosLast[0] = pos;
         }
     }
 
