@@ -8,6 +8,7 @@ public class MenuManager : MonoBehaviour {
     public Button buildBtn;
     public Button[] cancelBuildBtn;
     public Canvas menuMain, menuBuild, menuStatistics;
+    public GameObject BuildMenu;
     public static MenuManager instance;
     public E_MenuType ActiveMenu { get; set; }
 
@@ -31,7 +32,8 @@ public class MenuManager : MonoBehaviour {
                 menuMain.enabled = true;
                 break;
             case E_MenuType.BUILD:
-                menuBuild.enabled = true;
+                //menuBuild.enabled = true;
+                BuildMenu.SetActive(true);
                 break;
             case E_MenuType.STATISTICS:
                 menuStatistics.enabled = true;
@@ -54,7 +56,10 @@ public class MenuManager : MonoBehaviour {
         if(menuMain)
             menuMain.enabled = false;
         if (menuBuild)
-            menuBuild.enabled = false;
+        {
+            //menuBuild.enabled = false;
+            BuildMenu.SetActive(false);
+        }
         if (menuStatistics)
             menuStatistics.enabled = false;
     }
