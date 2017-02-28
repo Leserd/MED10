@@ -32,8 +32,8 @@ public class MenuManager : MonoBehaviour {
                 menuMain.enabled = true;
                 break;
             case E_MenuType.BUILD:
-                //menuBuild.enabled = true;
-                BuildMenu.SetActive(true);
+                menuBuild.enabled = true;
+                //BuildMenu.SetActive(true);
                 break;
             case E_MenuType.STATISTICS:
                 menuStatistics.enabled = true;
@@ -57,8 +57,8 @@ public class MenuManager : MonoBehaviour {
             menuMain.enabled = false;
         if (menuBuild)
         {
-            //menuBuild.enabled = false;
-            BuildMenu.SetActive(false);
+            menuBuild.enabled = false;
+           // BuildMenu.SetActive(false);
         }
         if (menuStatistics)
             menuStatistics.enabled = false;
