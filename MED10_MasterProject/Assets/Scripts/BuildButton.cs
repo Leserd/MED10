@@ -8,17 +8,11 @@ public class BuildButton : MonoBehaviour {
     private Button btn;
     public GameObject building;
 
-    private void Awake()
+    private void Start()
     {
         btn = GetComponent<Button>();
-        btn.onClick.AddListener(() => SetBuildingToBuild());
+        btn.onClick.AddListener(() => BuildManager.instance.SetBuildingToBuild(building));
        
     }
 
-    public void SetBuildingToBuild()
-    {
-        BuildManager.BuildingToBuild = building;
-        PlayerControls.instance.ChangeTouchStatus(E_TouchStatus.BUILD);
-        MenuManager.instance.CloseMenues();
-    }
 }
