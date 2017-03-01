@@ -7,71 +7,59 @@ using UnityEngine.UI;
 public class CalenderDate : MonoBehaviour {
     public Text OutputField;
     public Image HideBackground;
-    private int _currentInput;
+
+    private string _currentInput;
     private InputField _calenderField;
     private string _month = "MM", _year = "YYYY", _seperator = " / ";
     private string _calenderString;
 
-    private int[] _calenderAttemt = { 0, 0, 0 };
+    private string[] _calenderAttemt = { "DD", "MM", "YYYY" };
 
 
     private void Awake()
     {
         _calenderField = GetComponent<InputField>();
         _calenderField.onValueChanged.AddListener( delegate { TestOutput(); });
-        _calenderField.onValueChanged.AddListener(delegate { testInputNumbers(); });
+      //  _calenderField.onValueChanged.AddListener(delegate { testInputNumbers(); });
 
 
     }
 
     public void TestOutput()
     {
-        var time = new DateTime();
-        time.AddDays(3);
-        time.AddMonths(12);
-        time.AddYears(2018);
-        Debug.Log(time.ToString());
-        int.TryParse(_calenderField.text, out _currentInput);
+        _currentInput = _calenderField.text;
         AddToCalender();
         OutputField.text = OutputString();
-
-        //_calenderField.text = _date + _seperator + _month + _seperator + _year;
-        //OutputField.text = _currentInput.ToString();
         Background();
 
     }
+
     private void AddToCalender()
     {
         if (_currentInput.ToString().Length <=  2)
         {
             _calenderAttemt[0] = _currentInput;
-            _calenderAttemt[1] = 0;
-            _calenderAttemt[2] = 0;
+            _calenderAttemt[1] = "MM";
+            _calenderAttemt[2] = "YYYY";
         }
         if (_currentInput.ToString().Length <= 4 && _currentInput.ToString().Length >=3)
         {
-            if (_currentInput.ToString().Length == 3)
-            {
-                var oneDigit = _currentInput % 10;
-                _calenderAttemt[1] = oneDigit;
-            }
-            else
-            {
-                var twoDigits = _currentInput % 100;
-                _calenderAttemt[1] = twoDigits;
-            }
-            _calenderAttemt[2] = 0;
+
+            var month = _currentInput;
+            month.Substring(2);
+            _calenderAttemt[1] = month;
+            _calenderAttemt[2] = "YYYY";
         }
-        if (_currentInput.ToString().Length <= 6 && _currentInput.ToString().Length >= 5)
+        if (_currentInput.ToString().Length <= 8 && _currentInput.ToString().Length >= 5)
         {
-            var twoDigits = _currentInput % 10000;
-
-            _calenderAttemt[2] = twoDigits;
-
+            var year = _currentInput;
+            year.Substring(4);
+            _calenderAttemt[2] = year;
         }
+        else return;
 
     }
-
+/*
     public int[] InputNumbers(int values)
     {
         var numbers = new Stack<int>();
@@ -89,18 +77,18 @@ public class CalenderDate : MonoBehaviour {
         {
             Debug.Log(numbs + " number >=> ");
         }
-    }
+    }*/
 
 
     private string OutputString()
     {
-        if (_calenderAttemt[1] == 0)
+        if (_calenderAttemt[1] == "MM")
         {
             return _calenderAttemt[0].ToString() + " / MM / YYYY";
         }
-        if (_calenderAttemt[2] == 0)
+        if (_calenderAttemt[2] == "YYYY")
         {
-            return _calenderAttemt[0].ToString() + " / " + _calenderAttemt[1].ToString() + " / YY";
+            return _calenderAttemt[0].ToString() + " / " + _calenderAttemt[1].ToString() + " / YYYY";
         }
         return _calenderAttemt[0].ToString() + _seperator + _calenderAttemt[1] + _seperator + _calenderAttemt[2];
     }
@@ -108,13 +96,15 @@ public class CalenderDate : MonoBehaviour {
 
     private void Background()
     {
-        if (_currentInput != 0)
+        if (_currentInput != "")
         {
+            Debug.Log("Active");
             HideBackground.gameObject.SetActive(true);
             OutputField.gameObject.SetActive(true);
         }
         else
         {
+            Debug.Log("Not active");
             HideBackground.gameObject.SetActive(false);
             OutputField.gameObject.SetActive(false);
 

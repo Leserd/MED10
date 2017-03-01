@@ -9,17 +9,11 @@ public class BuyBuilding : MonoBehaviour {
     public Sprite BuildingSprite;
     public string Name;
     
-
-
-
     [SerializeField]
     int IncomeAmount=0,Target=0, AccountCost=0, ElectricityCost=0, ClothingCost=0, EntertainmentCost=0, WaterCost=0,FoodCost=0;
     [SerializeField]
     float TimeToUpdateInSeconds = 1f;
-
-
-
-
+    
 
     public void ButtonPress(Transform parentTransform)
     {
