@@ -32,7 +32,9 @@ public class SelectDate : MonoBehaviour {
 
 
         _date.text = "01" + monthNumbers + _year.text ;
-        Debug.Log("Month = " + _month.text + " " + monthNumbers + "\n Year = " + _year.text);
+        //var dataText = "01" + monthNumbers + _year.text;
+        var accessCalender = CalenderDate.Instance;
+        accessCalender.OutsideUpdate( new string[]{ "01", monthNumbers, _year.text});
 
         Parent.SetActive(false);
 
