@@ -68,9 +68,10 @@ public class Tile : MonoBehaviour {
             sprite.color = colorDefault;
     }
 
-    public void BuildOnTile()
+    public void AssignBuilding(Building building)
     {
-        attachedBuilding = Instantiate(BuildManager.BuildingToBuild, transform.position + BuildManager.buildingOffset, Quaternion.identity).GetComponent<Building>();
+
+        attachedBuilding = building;
         attachedBuilding.transform.SetParent(CreateBuilding.Instance.transform);
         attachedBuilding.GetComponent<SpriteRenderer>().sortingOrder = GetComponent<SpriteRenderer>().sortingOrder + 1;
         ChangeTileStatus(E_TileStatus.FULL);
@@ -78,6 +79,7 @@ public class Tile : MonoBehaviour {
 
     }
 }
+
 
 public enum E_TileStatus
 {
