@@ -5,6 +5,7 @@ using UnityEngine;
 public class TileManager : MonoBehaviour {
 
     public GameObject tilePrefab2D;
+    public Tile[,] tiles;
     public static TileManager instance;
     public delegate void BuildingLocations(bool show);
     public static event BuildingLocations ToggleTileStatus;
@@ -17,28 +18,59 @@ public class TileManager : MonoBehaviour {
     private void Awake()
     {
         instance = this;
+        tiles = new Tile[TILE_GRID_X_SIZE, TILE_GRID_Y_SIZE];
     }
 
     private void Start()
     {
-        SetUpTileGrid();
+        //SetUpTileGrid();                              //Spawn tile grid instantly
+        StartCoroutine(SetUpTileGridCoroutine());       //Spawn tile grid over time
     }
 
     private void SetUpTileGrid()
     {
         Vector3 startPos = new Vector3(0, 0, 0);
         int renderOrder = (TILE_GRID_X_SIZE * TILE_GRID_Y_SIZE) * (-1);
-        
+        Transform tileParent = new GameObject("Tiles").transform;
+       
         for (int y = 0; y < TILE_GRID_Y_SIZE; y++)
         {
             for (int x = TILE_GRID_X_SIZE; x > 0; x--)
+            //for (int x = 0; x < TILE_GRID_X_SIZE; x++)    //This spawns tiles in a more logical order (but messes up rendering order)
             {
                 Vector3 pos = startPos + new Vector3((x * TILE_GRID_X_DIST / 2) + (y * TILE_GRID_X_DIST / 2), 
                     (y * TILE_GRID_Y_DIST / 2) - (x * TILE_GRID_Y_DIST / 2), 0);
                 renderOrder++;
                 SpriteRenderer tile = Instantiate(tilePrefab2D, pos, Quaternion.identity).GetComponent<SpriteRenderer>();
-                tile.transform.SetParent(gameObject.transform);
+                tile.transform.name = "Tile(" + x + "/" + (TILE_GRID_Y_SIZE - y) + ")"; 
                 tile.sortingOrder = renderOrder;
+                tiles[x-1, y] = tile.GetComponent<Tile>();
+                tile.transform.parent = tileParent;
+            }
+        }
+    }
+
+    //If we want the grid to be placed over time instead of instantly
+    private IEnumerator SetUpTileGridCoroutine()
+    {
+        Vector3 startPos = new Vector3(0, 0, 0);
+        int renderOrder = (TILE_GRID_X_SIZE * TILE_GRID_Y_SIZE) * (-1);
+        Transform tileParent = new GameObject("Tiles").transform;
+
+        for (int y = 0; y < TILE_GRID_Y_SIZE; y++)
+        {
+            for (int x = TILE_GRID_X_SIZE; x > 0; x--)
+            //for (int x = 0; x < TILE_GRID_X_SIZE; x++)    //This spawns tiles in a more logical order (but messes up rendering order)
+            {
+                Vector3 pos = startPos + new Vector3((x * TILE_GRID_X_DIST / 2) + (y * TILE_GRID_X_DIST / 2),
+                    (y * TILE_GRID_Y_DIST / 2) - (x * TILE_GRID_Y_DIST / 2), 0);
+                renderOrder++;
+                SpriteRenderer tile = Instantiate(tilePrefab2D, pos, Quaternion.identity).GetComponent<SpriteRenderer>();
+                tile.transform.name = "Tile(" + x + "/" + (TILE_GRID_Y_SIZE - y) + ")";
+                tile.sortingOrder = renderOrder;
+                tiles[x - 1, y] = tile.GetComponent<Tile>();
+                tile.transform.parent = tileParent;
+                yield return new WaitForSeconds(Time.deltaTime / (TILE_GRID_X_SIZE * TILE_GRID_Y_SIZE) / 3);
             }
         }
     }
