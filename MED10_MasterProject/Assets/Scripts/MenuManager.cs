@@ -6,8 +6,9 @@ using UnityEngine.UI;
 public class MenuManager : MonoBehaviour {
 
     public Button buildBtn;
+    public Button achievementBtn;
     public Button[] cancelBuildBtn;
-    public Canvas menuMain, menuBuild, menuStatistics;
+    public Canvas menuMain, menuBuild, menuStatistics, menuAchievements;
     public GameObject BuildMenu;
     public static MenuManager instance;
     public E_MenuType ActiveMenu { get; set; }
@@ -16,6 +17,7 @@ public class MenuManager : MonoBehaviour {
     {
         instance = this;
         buildBtn.onClick.AddListener(() => ChangeMenu(E_MenuType.BUILD));
+        achievementBtn.onClick.AddListener(() => ChangeMenu(E_MenuType.ACHIEVEMENTS));
 
         PlayerControls.TouchStatusChange += ToggleCancelButton;
     }
@@ -37,6 +39,9 @@ public class MenuManager : MonoBehaviour {
                 break;
             case E_MenuType.STATISTICS:
                 menuStatistics.enabled = true;
+                break;
+            case E_MenuType.ACHIEVEMENTS:
+                menuAchievements.enabled = true;
                 break;
         }
     }
@@ -62,6 +67,8 @@ public class MenuManager : MonoBehaviour {
         }
         if (menuStatistics)
             menuStatistics.enabled = false;
+        if (menuAchievements)
+            menuAchievements.enabled = false;
     }
 
 }
@@ -70,5 +77,6 @@ public enum E_MenuType
 {
     MAIN,
     BUILD,
-    STATISTICS
+    STATISTICS,
+    ACHIEVEMENTS
 }
