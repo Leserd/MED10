@@ -1,17 +1,33 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class BuildManager : MonoBehaviour {
 
     public static BuildManager instance;
 	public static GameObject BuildingToBuild { get; set; }
     public static Vector3 buildingOffset = new Vector3(0, 0.55f, 0);
+    public List<Button> availableBuildings = new List<Button>();
+    public GameObject buildingBtnPrefab;
+    public Transform buildingBtnParent;              //The Transform to which all building buttons will be a child
+
 
     private void Awake()
     {
         instance = this;
     }
+
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            AddBuildingButton("Prefabs/House2D");
+        }
+    }
+
 
     public void SetBuildingToBuild(GameObject building)
     {
@@ -25,11 +41,13 @@ public class BuildManager : MonoBehaviour {
         {
             spawnPos = ray.GetPoint(hitdist);
         }
-
+        
         BuildingToBuild = Instantiate(building, spawnPos, Quaternion.identity);
         PlayerControls.instance.ChangeTouchStatus(E_TouchStatus.BUILD);
         MenuManager.instance.CloseMenues();
     }
+
+
 
     public void CancelBuild()
     {
@@ -37,8 +55,33 @@ public class BuildManager : MonoBehaviour {
         PlayerControls.instance.ChangeTouchStatus(E_TouchStatus.IDLE);
     }
 
-    public void Test()
+
+
+    public void AddBuildingButton(string buildingPath)
     {
-        print("up");
+        GameObject building = Resources.Load<GameObject>(buildingPath);
+
+        //Instantiate the new button
+        GameObject newBuildingBtn = Instantiate(buildingBtnPrefab);
+        newBuildingBtn.transform.SetParent(buildingBtnParent);
+        newBuildingBtn.transform.localScale = Vector3.one;
+
+        //Assign referenced building to build
+        newBuildingBtn.GetComponent<BuildButton>().building = building;
+
+        //Create BeginDrag trigger event
+        EventTrigger trigger = newBuildingBtn.GetComponent<EventTrigger>();
+        EventTrigger.Entry entry = new EventTrigger.Entry();
+        entry.eventID = EventTriggerType.BeginDrag;
+        entry.callback.AddListener((eventData) => { SetBuildingToBuild(building); });
+
     }
+}
+
+public enum E_BuildingType
+{
+    HOUSE,
+    FACTORY,
+    MEDIA
+
 }
