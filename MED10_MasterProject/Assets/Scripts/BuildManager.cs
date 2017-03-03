@@ -11,13 +11,14 @@ public class BuildManager : MonoBehaviour {
     public static Vector3 buildingOffset = new Vector3(0, 0.55f, 0);
     public List<Button> availableBuildings = new List<Button>();
     public GameObject buildingBtnPrefab;
-    public Transform buildingBtnParent;              //The Transform to which all building buttons will be a child
-
+    public Transform buildingBtnParent;             //The Transform to which all building buttons will be a child
+    public Canvas buildMenu;                        
 
     private void Awake()
     {
         instance = this;
     }
+
 
 
     private void Update()
@@ -27,6 +28,7 @@ public class BuildManager : MonoBehaviour {
             AddBuildingButton("Prefabs/House2D");
         }
     }
+
 
 
     public void SetBuildingToBuild(GameObject building)
@@ -44,7 +46,6 @@ public class BuildManager : MonoBehaviour {
         
         BuildingToBuild = Instantiate(building, spawnPos, Quaternion.identity);
         PlayerControls.instance.ChangeTouchStatus(E_TouchStatus.BUILD);
-        MenuManager.instance.CloseMenues();
     }
 
 
@@ -53,6 +54,7 @@ public class BuildManager : MonoBehaviour {
     {
         Destroy(BuildingToBuild.gameObject);
         PlayerControls.instance.ChangeTouchStatus(E_TouchStatus.IDLE);
+        //TODO: replace button on the build menu
     }
 
 
@@ -60,11 +62,19 @@ public class BuildManager : MonoBehaviour {
     public void AddBuildingButton(string buildingPath)
     {
         GameObject building = Resources.Load<GameObject>(buildingPath);
+        if(building == null)
+        {
+            Debug.Log("The path: " + buildingPath + " returns no object");
+            return;
+        }
 
         //Instantiate the new button
         GameObject newBuildingBtn = Instantiate(buildingBtnPrefab);
         newBuildingBtn.transform.SetParent(buildingBtnParent);
         newBuildingBtn.transform.localScale = Vector3.one;
+
+        //Add new button to List
+        availableBuildings.Add(newBuildingBtn.GetComponent<Button>());
 
         //Assign referenced building to build
         newBuildingBtn.GetComponent<BuildButton>().building = building;
@@ -74,8 +84,13 @@ public class BuildManager : MonoBehaviour {
         EventTrigger.Entry entry = new EventTrigger.Entry();
         entry.eventID = EventTriggerType.BeginDrag;
         entry.callback.AddListener((eventData) => { SetBuildingToBuild(building); });
+        trigger.triggers.Add(entry);
 
+        MenuManager.instance.ToggleBuildMenu();
     }
+
+
+    
 }
 
 public enum E_BuildingType

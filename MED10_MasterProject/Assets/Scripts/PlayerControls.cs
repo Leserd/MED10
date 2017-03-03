@@ -344,7 +344,7 @@ public class PlayerControls : MonoBehaviour
                 TileManager.instance.ToggleTileAvailability(true);
                 break;
         }
-        MenuManager.instance.CloseMenues();
+        //MenuManager.instance.CloseMenues();
     }
 
 
