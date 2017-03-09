@@ -5,6 +5,7 @@ using UnityEngine;
 public class TileManager : MonoBehaviour {
 
     public GameObject tilePrefab2D;
+    public GameObject tileGridPrefab2D;
     public Tile[,] tiles;
     public static TileManager instance;
     public delegate void BuildingLocations(bool show);
@@ -24,7 +25,13 @@ public class TileManager : MonoBehaviour {
     private void Start()
     {
         //SetUpTileGrid();                              //Spawn tile grid instantly
-        StartCoroutine(SetUpTileGridCoroutine());       //Spawn tile grid over time
+        //StartCoroutine(SetUpTileGridCoroutine());     //Spawn tile grid over time
+        SetUpTilesByPrefab();                           //Spawn tile grid instantly via prefab
+    }
+
+    private void SetUpTilesByPrefab()
+    {
+        Instantiate(tileGridPrefab2D);
     }
 
     private void SetUpTileGrid()

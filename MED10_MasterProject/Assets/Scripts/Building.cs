@@ -15,6 +15,8 @@ public class Building : MonoBehaviour {
     private Color halfTransparent = new Color(1, 1, 1, 0.4f);
     private Color fullTransparent = new Color(1, 1, 1, 0.0f);
     private List<Tile> touchingTiles;
+    private Vector3 buildingPosition = Vector3.zero;
+    private Tile hoveredTile;
 
     private void Awake()
     {
@@ -28,35 +30,136 @@ public class Building : MonoBehaviour {
     {
         if(status == E_BuildingStatus.CHOOSE_LOCATION)
         {
-            if(PlayerControls.hoveredTile != null)
+            if (PlayerControls.hoveredTile)
             {
-                transform.position = PlayerControls.hoveredTile.transform.position + BuildManager.buildingOffset;
-                if(PlayerControls.hoveredTile.TileStatus == E_TileStatus.EMPTY)
+                if (PlayerControls.hoveredTile != hoveredTile)
                 {
-                    SetPossibleToBuild(true);
-                }
-                else
-                {
-                    SetPossibleToBuild(false);
+                    transform.position = PlayerControls.hoveredTile.transform.position + BuildManager.buildingOffset;
+                    hoveredTile = PlayerControls.hoveredTile;
                 }
             }
             else
             {
                 Plane plane = new Plane(Vector3.back, Vector3.zero);
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-                Vector3 mousePos = Vector3.zero;
                 float hitdist = 0.0f;
 
                 if (plane.Raycast(ray, out hitdist))
                 {
-                    mousePos = ray.GetPoint(hitdist);
+                    transform.position = ray.GetPoint(hitdist);
+                    print("This happenned");
+                }
+                //print("not hitting anything");
+                SetPossibleToBuild(false);
+                hoveredTile = null;
+            }
+
+            //transform.position = CalculatePosition();
+            sprite.sortingOrder = CalculateSortingOrder();
+        }
+    }
+
+
+    private Vector3 CalculatePosition()
+    {
+        print(touchingTiles.Count);
+        Vector3 newPos = Vector3.zero;
+
+        if(hoveredTile != null)
+        {
+            if (touchingTiles.Count > 0)
+            {
+                if (buildingSize == E_BuildingSize.ONE)
+                {
+                    newPos = hoveredTile.transform.position + BuildManager.buildingOffset;
+                }
+                else
+                {
+                    foreach (Tile tile in touchingTiles)
+                    {
+                        newPos += tile.transform.position + BuildManager.buildingOffset;
+                    }
+                    newPos /= touchingTiles.Count;
+                    print("Calculating tile pos");
                 }
 
-                transform.position = mousePos;
-                SetPossibleToBuild(false);
             }
+        }
+        
+        else
+        {
+            Plane plane = new Plane(Vector3.back, Vector3.zero);
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            float hitdist = 0.0f;
+
+            if (plane.Raycast(ray, out hitdist))
+            {
+                newPos = ray.GetPoint(hitdist);
+                print("This happenned");
+            }
+            //print("not hitting anything");
+            SetPossibleToBuild(false);         
+        }
+
+
+
+
+        ////If building is not hitting any tiles
+        //if (touchingTiles.Count == 0 && hoveredTile == null)
+        //{
             
+        //}
+        ////If building is hitting tiles
+        //else 
+        //{
+        //    Ray mouseRay = Camera.main.ScreenPointToRay(PlayerControls.instance.touchPosCurrent[0]);
+        //    RaycastHit2D mouseHit = Physics2D.GetRayIntersection(mouseRay);
+        //    //if mouse is above tile that is not in the currently touched tiles
+        //    if (mouseHit.collider != null)
+        //    {
+        //        if (mouseHit.transform.tag == "Tile")
+        //        {
+        //            if (!touchingTiles.Contains(mouseHit.transform.GetComponent<Tile>()))
+        //            {
+        //                print("Tile not in touchingTiles");
+        //                newPos =  mouseHit.point;
+        //            }
+        //        }
+        //    }
+            
+        //    else
+        //    {
+        //        foreach (Tile tile in touchingTiles)
+        //        {
+        //            newPos += tile.transform.position + BuildManager.buildingOffset;
+        //        }
+        //        newPos /= touchingTiles.Count;
+        //        print("Calculating tile pos");
+
+        //    }
+        //}
+
+        return newPos;
+    }
+
+    public int CalculateSortingOrder()
+    {
+        if(touchingTiles.Count == 0)
+        {
+            return 10; //Arbitrarily high number to place building on top of any other tiles or buildings 
+        }
+        else
+        {
+            int sortingOrder = -999;    //arbitrary number lower than the lowest sortingOrder value in the tiles.
+
+            foreach (Tile tile in touchingTiles)
+            {
+                if (tile.GetComponent<SpriteRenderer>().sortingOrder > sortingOrder)
+                {
+                    sortingOrder = tile.GetComponent<SpriteRenderer>().sortingOrder;
+                }
+            }
+            return sortingOrder + 1;
         }
     }
 
@@ -79,6 +182,8 @@ public class Building : MonoBehaviour {
         ChangeStatus(E_BuildingStatus.COMPLETE);
     }
 
+
+
     public void SetPossibleToBuild(bool possibility)
     {
         possibleToBuild = possibility;
@@ -88,7 +193,9 @@ public class Building : MonoBehaviour {
             sprite.color = colorImpossible;
     }
 
-    public  void ChangeStatus(E_BuildingStatus s)
+
+
+    public void ChangeStatus(E_BuildingStatus s)
     {
         status = s;
         switch (status)
@@ -104,27 +211,23 @@ public class Building : MonoBehaviour {
         }
     }
 
+
+
     public void BuildOnTile()
     {
-        int sortingOrder = -999;    //arbitrary number lower than the lowest sortingOrder value in the tiles.
-        Vector3 buildingPos = Vector3.zero;
-
         foreach(Tile tile in touchingTiles)
         {
-            tile.AssignBuilding(BuildManager.BuildingToBuild.GetComponent<Building>());
+            tile.AssignBuilding(BuildManager.buildingToBuild.GetComponent<Building>());
             tile.ChangeTileStatus(E_TileStatus.FULL);
-            buildingPos += tile.transform.position + BuildManager.buildingOffset;
-            if (tile.GetComponent<SpriteRenderer>().sortingOrder > sortingOrder)
-            {
-                sortingOrder = tile.GetComponent<SpriteRenderer>().sortingOrder;
-            }
         }
-        buildingPos /= touchingTiles.Count;
 
-        transform.position = buildingPos;
+        //Update position and sortingOrder, to be sure it is placed properly
+        transform.position = CalculatePosition();
+        sprite.sortingOrder = CalculateSortingOrder();
 
-        GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-        
+        //Remove the (disabled) button for this building in the build bar
+        BuildManager.instance.RemoveActiveBuildButton();
+
         ChangeStatus(E_BuildingStatus.BEING_BUILT);
     }
 
@@ -136,6 +239,7 @@ public class Building : MonoBehaviour {
         {
             Tile tile = col.GetComponent<Tile>();
             touchingTiles.Add(tile);
+
             if(tile.TileStatus == E_TileStatus.FULL)
             {
                 SetPossibleToBuild(false);
@@ -144,8 +248,12 @@ public class Building : MonoBehaviour {
             {
                 SetPossibleToBuild(true);
             }
+
+            transform.position = CalculatePosition();
         }
     }
+
+
 
     private void OnTriggerExit2D(Collider2D col)
     {
@@ -155,28 +263,37 @@ public class Building : MonoBehaviour {
             {
                 touchingTiles.Remove(col.GetComponent<Tile>());
             }
+            
 
             int fullCounter = 0;
             foreach (Tile tile in touchingTiles)
             {
-
                 if(tile.TileStatus == E_TileStatus.FULL)
                 {
                     fullCounter++;
                 }
             }
-            if(fullCounter == 0)
+            
+            if (fullCounter == 0)
             {
                 SetPossibleToBuild(true);
+                Debug.Log("Counter: " + fullCounter + ", " + possibleToBuild);
+
             }
             else
             {
                 SetPossibleToBuild(false);
+                Debug.Log("Counter: " + fullCounter + ", " + possibleToBuild);
+
             }
 
+
+            transform.position = CalculatePosition();
         }
     }
 }
+
+
 
 public enum E_BuildingSize
 {
@@ -187,6 +304,8 @@ public enum E_BuildingSize
     FOUR_SQUARE,
     FOUR_L
 }
+
+
 
 public enum E_BuildingStatus
 {
