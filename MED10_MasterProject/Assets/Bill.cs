@@ -14,29 +14,24 @@ public class Bill : MonoBehaviour {
     private bool _isActive, _choseCategory, _choseFrequency;
     private BetalingsServiceData BPS;
     private string _toggleNumber;
+    public List<Toggle> Toggles;
 
 
-
-
-	// Use this for initialization
-	void Start () {
+    private void Awake()
+    {
         BPS = BetalingsServiceData.Instance;
         Frequency.allowSwitchOff = true;
         Finished.onClick.AddListener(() => Test());
-       
-
-		
-	}
-
-    private void Update()
-    {
-
-        GetActiveToggle();
-        CategoryChosen();
-
- 
+        Category.onValueChanged.AddListener(delegate { CategoryChosen(); });
+        foreach (var togle in Toggles)
+        {
+            togle.onValueChanged.AddListener(delegate { GetActiveToggle(togle.isOn, togle); });
+        }
     }
 
+
+
+    
     private void CategoryChosen()
     {
         if (Category.value != 0)
@@ -49,10 +44,26 @@ public class Bill : MonoBehaviour {
 
     }
 
-    void GetActiveToggle()
+    void GetActiveToggle(bool toggleOn, Toggle changedToggle)
     {
+        if (toggleOn)
+        {
+            _choseFrequency = true;
+            FinishedBill();
+            _toggleNumber = changedToggle.name;
+        }
+        if (!Frequency.AnyTogglesOn() )
+        {
+            _choseFrequency = false;
+            FinishedBill();
+        }
+
+
+
+        /*
         if (Frequency.AnyTogglesOn())
         {
+
             foreach (var item in Frequency.ActiveToggles())
             {
                 _choseFrequency = true;
@@ -62,7 +73,7 @@ public class Bill : MonoBehaviour {
             }
             return;
         }
-        _choseFrequency = false;
+        _choseFrequency = false;*/
     }
 
 
