@@ -9,8 +9,11 @@ public class Bill : MonoBehaviour {
     public InputField BillAmount;
     public Dropdown Category;
     public ToggleGroup Frequency;
+    public Button Finished;
 
+    private bool _isActive, _choseCategory, _choseFrequency;
     private BetalingsServiceData BPS;
+    private string _toggleNumber;
 
 
 
@@ -19,6 +22,7 @@ public class Bill : MonoBehaviour {
 	void Start () {
         BPS = BetalingsServiceData.Instance;
         Frequency.allowSwitchOff = true;
+        Finished.onClick.AddListener(() => Test());
        
 
 		
@@ -26,21 +30,87 @@ public class Bill : MonoBehaviour {
 
     private void Update()
     {
-        foreach (var toogle in Frequency.ActiveToggles())
-        {
-            Debug.Log(toogle.name);
-        }
-        Debug.Log(Frequency.ActiveToggles().ToString());
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Test();
-        }
+
+        GetActiveToggle();
+        CategoryChosen();
+
+ 
     }
+
+    private void CategoryChosen()
+    {
+        if (Category.value != 0)
+        {
+            _choseCategory = true;
+            FinishedBill();
+            return;
+        }
+        _choseCategory = false;
+
+    }
+
+    void GetActiveToggle()
+    {
+        if (Frequency.AnyTogglesOn())
+        {
+            foreach (var item in Frequency.ActiveToggles())
+            {
+                _choseFrequency = true;
+                FinishedBill();
+                _toggleNumber = item.name; 
+                break;
+            }
+            return;
+        }
+        _choseFrequency = false;
+    }
+
+
 
     private void Test()
     {
-        Debug.Log("Pressed Space");
-        BPS.AddToCurrentExpenses(BillName.text, int.Parse(BillAmount.text), 12, Category.captionText.text);
-        Debug.Log(BPS.GetPaymentservices(0).info());
+        BPS.AddToCurrentExpenses(BillName.text, float.Parse(BillAmount.text), int.Parse(_toggleNumber), Category.captionText.text);
+        gameObject.SetActive(false);
+
+
+        var bills = GameObject.FindGameObjectsWithTag("Bill");
+        if (bills.Length > 2)
+        {
+            foreach (var bill in bills)
+            {
+
+                if (bill.name == BillName.text)
+                {
+                    Destroy(bill);
+                    break;
+                }
+            }
+        }
+        else
+        {
+            Destroy(bills[1]);
+            bills[0].SetActive(false);
+        }
+
+
+
+        transform.parent.gameObject.SetActive(false);
+        foreach (var item in BPS.GetAllPaymentServices())
+        {
+            Debug.Log(item.Info());
+        }
+        Destroy(this);
+        //Debug.Log(BPS.GetPaymentservices(0).Info());
+
+    }
+
+    void FinishedBill()
+    {
+        if (_choseFrequency && _choseCategory)
+        {
+            Finished.interactable = true;
+            return;
+        }
+        Finished.interactable = false;
     }
 }

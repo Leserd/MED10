@@ -21,6 +21,10 @@ public class BetalingsServiceData : MonoBehaviour {
         IDnum += 1;
 
     }
+    public List<BSData> GetAllPaymentServices()
+    {
+        return _currentHouses;
+    }
 
     // method to get data based on id
     public BSData GetPaymentservices (int ID)
@@ -60,7 +64,7 @@ public class BetalingsServiceData : MonoBehaviour {
 
 
         }
-        public string info()
+        public string Info()
         {
             var info = "Transaction ID = " + TransactionName
                 + "\nID = " + ID

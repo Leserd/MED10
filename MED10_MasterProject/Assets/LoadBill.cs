@@ -9,21 +9,22 @@ public class LoadBill : MonoBehaviour {
     public GameObject ParentTransform;
     public GameObject Bill;
 
-    List<GameObject> _bills = new List<GameObject>();
 
 
     // Use this for initialization
-    void Start () {
+    void Awake () {
         foreach (var Name in Data.LasseTestData)
         {
             var bill = Instantiate(BillTextObject, ParentTransform.transform);
+            bill.transform.localScale = Vector3.one;
+            bill.tag = "Bill";
             bill.name = Name.BSDataName;
             bill.GetComponent<Text>().text = Name.BSDataName;
             bill.SetActive(true);
             bill.AddComponent<Button>().onClick.AddListener(() => LookAtBill(Name));
             
-            _bills.Add(bill);
         }
+        gameObject.SetActive(false);
     }
 
 
@@ -36,6 +37,7 @@ public class LoadBill : MonoBehaviour {
         var bill = billStart.GetComponent<Bill>();
         bill.BillName.text = testBill.BSDataName;
         bill.BillAmount.text = testBill.BSDataAmount;
+
 
         //Look at the bill!!
     }
