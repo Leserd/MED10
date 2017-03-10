@@ -15,8 +15,9 @@ public class Building : MonoBehaviour {
     private Color halfTransparent = new Color(1, 1, 1, 0.4f);
     private Color fullTransparent = new Color(1, 1, 1, 0.0f);
     private List<Tile> touchingTiles;
-    private Vector3 buildingPosition = Vector3.zero;
     private Tile hoveredTile;
+
+
 
     private void Awake()
     {
@@ -26,46 +27,59 @@ public class Building : MonoBehaviour {
         touchingTiles = new List<Tile>();
     }
 
+
+
     private void Update()
     {
         if(status == E_BuildingStatus.CHOOSE_LOCATION)
         {
-            if (PlayerControls.hoveredTile)
-            {
-                if (PlayerControls.hoveredTile != hoveredTile)
-                {
-                    transform.position = PlayerControls.hoveredTile.transform.position + BuildManager.buildingOffset;
-                    hoveredTile = PlayerControls.hoveredTile;
-
-                    touchingTiles = GetTouchingTiles();
-
-                }
-            }
-            else
-            {
-                Plane plane = new Plane(Vector3.back, Vector3.zero);
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                float hitdist = 0.0f;
-
-                if (plane.Raycast(ray, out hitdist))
-                {
-                    transform.position = ray.GetPoint(hitdist);
-                    //print("This happenned");
-                }
-                //print("not hitting anything");
-                SetPossibleToBuild(false);
-                hoveredTile = null;
-            }
-
-            //transform.position = CalculatePosition();
-            sprite.sortingOrder = CalculateSortingOrder();
+            UpdatePosition();
         }
     }
 
 
+
+    private void UpdatePosition()
+    {
+        if (PlayerControls.hoveredTile)
+        {
+            if (PlayerControls.hoveredTile != hoveredTile)
+            {
+                //Update hoveredTile
+                hoveredTile = PlayerControls.hoveredTile;
+
+                //Find touching tiles (touchingTiles must be set before calculating position)
+                touchingTiles = GetTouchingTiles();
+
+                //Update position (After finding the touching tiles of the new position)
+                transform.position = CalculatePosition();
+
+                //Check whether the building can be built here
+                SetPossibleToBuild(CalculateBuildability());
+            }
+        }
+        else
+        {
+            Plane plane = new Plane(Vector3.back, Vector3.zero);
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            float hitdist = 0.0f;
+
+            if (plane.Raycast(ray, out hitdist))
+            {
+                transform.position = ray.GetPoint(hitdist);
+            }
+
+            SetPossibleToBuild(false);
+            hoveredTile = null;
+        }
+
+        sprite.sortingOrder = CalculateSortingOrder();
+    }
+
+
+
     private Vector3 CalculatePosition()
     {
-        //print(touchingTiles.Count);
         Vector3 newPos = Vector3.zero;
 
         if(hoveredTile != null)
@@ -83,25 +97,10 @@ public class Building : MonoBehaviour {
                         newPos += tile.transform.position + BuildManager.buildingOffset;
                     }
                     newPos /= touchingTiles.Count;
-                    //print("Calculating tile pos");
                 }
             }
         }
-        
-        else
-        {
-            Plane plane = new Plane(Vector3.back, Vector3.zero);
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            float hitdist = 0.0f;
-
-            if (plane.Raycast(ray, out hitdist))
-            {
-                newPos = ray.GetPoint(hitdist);
-            }
-
-            SetPossibleToBuild(false);         
-        }
-
+       
         return newPos;
     }
 
@@ -127,6 +126,8 @@ public class Building : MonoBehaviour {
             return sortingOrder + 1;
         }
     }
+
+
 
     //For now it shows building completeness by changing alpha value of sprite
     public IEnumerator Build()
@@ -198,12 +199,12 @@ public class Building : MonoBehaviour {
                     //Add nothing
                     break;
                 case 2:
-                    tileCoordsToCheck.Add(new Vector2(0, -1)); //Down
+                    tileCoordsToCheck.Add(new Vector2(0, 1)); //Up
                     break;
                 case 4:
                     tileCoordsToCheck.Add(new Vector2(1, 0));  //Right
-                    tileCoordsToCheck.Add(new Vector2(1, -1)); //Down to the right
-                    tileCoordsToCheck.Add(new Vector2(0, -1)); //Down
+                    tileCoordsToCheck.Add(new Vector2(1, 1)); //Up to the right
+                    tileCoordsToCheck.Add(new Vector2(0, 1)); //Up
                     break;
                 default:
                     //Add nothing
@@ -216,10 +217,9 @@ public class Building : MonoBehaviour {
                 int y = (int)curTileCoords.y + (int)tileCoordsToCheck[i].y;
 
                 //If the coords point to a non-existant tile, dont try to add it
-                if (x > TileManager.instance.tiles.GetLength(0) || x < 0 
-                    || y > TileManager.instance.tiles.GetLength(1) || y < 0)
+                if (x > TileManager.instance.tiles.GetLength(0) - 1 || x < 0 
+                    || y > TileManager.instance.tiles.GetLength(1) - 1 || y < 0)
                 {
-                    print("(" + x + " / " + y + ") did not exist");
                     continue;
                 }
                     
@@ -252,72 +252,6 @@ public class Building : MonoBehaviour {
 
 
 
-    //public void CalculateTouchingTiles()
-    //{
-    //    float overlapCircleSize = 0;
-    //    Vector2 overlapBoxSize = Vector2.zero;
-    //    Vector3 overlapCirclePos;
-    //    if (hoveredTile)
-    //        overlapCirclePos = hoveredTile.transform.position;
-    //    else
-    //        overlapCirclePos = transform.position;
-
-     
-
-    //    switch (buildingSize)
-    //    {
-    //        case 1:
-    //            overlapCircleSize = 0.1f;
-    //            overlapBoxSize = new Vector2(0.1f, 0.1f);
-    //           // overlapCirclePos = transform.position;
-    //            break;
-    //        case 2:
-    //            overlapCircleSize = 0.1f;
-    //            overlapBoxSize = new Vector2(0.1f, 0.1f);
-    //            overlapCirclePos += new Vector3(0.5f, 0.25f, 0);
-    //            break;
-    //        case 4:
-    //            overlapBoxSize = new Vector2(0.25f, 0.25f);
-    //            overlapCircleSize = 0.22f;
-    //           // overlapCirclePos = transform.position;
-    //            break;
-    //        default:
-    //            overlapBoxSize = new Vector2(0.1f, 0.1f);
-    //            overlapCircleSize = 0.1f;
-    //           // overlapCirclePos = transform.position;
-    //            break;
-    //    }
-    //    //Instantiate(BuildManager.instance.testDot, overlapCirclePos, Quaternion.identity);
-    //   // Collider2D[] tilesHit = Physics2D.OverlapCircleAll(overlapCirclePos, overlapCircleSize);
-    //    Collider2D[] tilesHit = Physics2D.OverlapBoxAll(overlapCirclePos, overlapBoxSize, 0);
-
-    //    print(tilesHit.Length);
-
-    //    touchingTiles.Clear();
-
-
-
-    //    if(tilesHit.Length > 0)
-    //    {
-    //        SetPossibleToBuild(true);
-
-    //        foreach (Collider2D col in tilesHit)
-    //        {
-    //            Tile tile = col.GetComponent<Tile>();
-    //            if (tile)
-    //            {
-    //                touchingTiles.Add(tile);
-    //                if (tile.TileStatus == E_TileStatus.FULL)
-    //                {
-    //                    SetPossibleToBuild(false);
-    //                }
-    //            }
-                    
-    //        }
-    //    }
-    //}
-
-
     public void BuildOnTile()
     {
         foreach(Tile tile in touchingTiles)
@@ -335,76 +269,9 @@ public class Building : MonoBehaviour {
 
         ChangeStatus(E_BuildingStatus.BEING_BUILT);
     }
-
-
-
-    private void OnTriggerEnter2D(Collider2D col)
-    {
-        //if(col.tag == "Tile" && status == E_BuildingStatus.CHOOSE_LOCATION)
-        //{
-        //    Tile tile = col.GetComponent<Tile>();
-        //    touchingTiles.Add(tile);
-
-        //    if(tile.TileStatus == E_TileStatus.FULL)
-        //    {
-        //        SetPossibleToBuild(false);
-        //    }
-        //    else
-        //    {
-        //        SetPossibleToBuild(true);
-        //    }
-
-        //    transform.position = CalculatePosition();
-        //}
-        transform.position = CalculatePosition();
-
-        //CalculateTouchingTiles();
-
-        //Find touching tiles
-        touchingTiles = GetTouchingTiles();
-        //Check whether the building can be built here
-        SetPossibleToBuild(CalculateBuildability());
-    }
-
-
-
-    private void OnTriggerExit2D(Collider2D col)
-    {
-        //if(col.tag == "Tile" && status == E_BuildingStatus.CHOOSE_LOCATION)
-        //{
-        //    if (touchingTiles.Contains(col.GetComponent<Tile>()))
-        //    {
-        //        touchingTiles.Remove(col.GetComponent<Tile>());
-        //    }
-            
-
-        //    int fullCounter = 0;
-        //    foreach (Tile tile in touchingTiles)
-        //    {
-        //        if(tile.TileStatus == E_TileStatus.FULL)
-        //        {
-        //            fullCounter++;
-        //        }
-        //    }
-            
-        //    if (fullCounter == 0 && touchingTiles.Count == buildingSize)
-        //    {
-        //        SetPossibleToBuild(true);
-        //        Debug.Log("Counter: " + fullCounter + ", " + possibleToBuild);
-
-        //    }
-        //    else
-        //    {
-        //        SetPossibleToBuild(false);
-        //        Debug.Log("Counter: " + fullCounter + ", " + possibleToBuild);
-
-        //    }
-
-
-        //    transform.position = CalculatePosition();
-        //}
-    }
 }
+
+
 
 public enum E_BuildingStatus
 {

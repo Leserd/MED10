@@ -16,14 +16,16 @@ public class Tile : MonoBehaviour {
     private Color colorStatus;
     public int x, y;
 
+
+
 	void Awake() {
         TileStatus = E_TileStatus.EMPTY;
         colorStatus = colorEmpty;
-        //highlightPlane = transform.FindChild("HighlightPlane").GetComponent<MeshRenderer>();
         sprite = GetComponent<SpriteRenderer>();
 
         TileManager.ToggleTileStatus += ToggleHighlight;
     }
+
 
 
     public void ChangeTileStatus(E_TileStatus status)
@@ -41,30 +43,37 @@ public class Tile : MonoBehaviour {
         }
     }
 
+
+
     public void ToggleHighlight()
     {
         showTileStatus = !showTileStatus;
-        //highlightPlane.enabled = showTileStatus;
+
         if (showTileStatus)
             sprite.color = colorStatus;
         else
             sprite.color = colorDefault;
     }
 
+
+
     public void ToggleHighlight(bool show)
     {
         showTileStatus = show;
-        //highlightPlane.enabled = showTileStatus;
+
         if (showTileStatus)
             sprite.color = colorStatus;
         else
             sprite.color = colorDefault;
     }
+
+
 
     public void AssignBuilding(Building building)
     {
         attachedBuilding = building;
     }
+
 
 
     public void SetTileCoordinates(int x, int y)
@@ -73,6 +82,8 @@ public class Tile : MonoBehaviour {
         this.y = y;
     }
 }
+
+
 
 public enum E_TileStatus
 {
