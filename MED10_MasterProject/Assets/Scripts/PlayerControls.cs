@@ -192,8 +192,8 @@ public class PlayerControls : MonoBehaviour
                         TouchTile(mouseHit.transform.GetComponent<Tile>());
                     }
                 }
-                else
-                    print("NOTHING WAS HIT!");
+                //else
+                //    print("NOTHING WAS HIT!");
             }
         }
         else
@@ -360,7 +360,7 @@ public class PlayerControls : MonoBehaviour
                 TileManager.instance.ToggleTileAvailability(false);
                 break;
             case E_TouchStatus.BUILD:
-                TileManager.instance.ToggleTileAvailability(true);
+                TileManager.instance.ToggleFullTileAvailability(true);
                 break;
         }
     }

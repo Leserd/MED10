@@ -22,8 +22,10 @@ public class Tile : MonoBehaviour {
         TileStatus = E_TileStatus.EMPTY;
         colorStatus = colorEmpty;
         sprite = GetComponent<SpriteRenderer>();
-
         TileManager.ToggleTileStatus += ToggleHighlight;
+        TileManager.ToggleFullTileStatus += ToggleHighlightFull;
+
+
     }
 
 
@@ -39,11 +41,12 @@ public class Tile : MonoBehaviour {
             case E_TileStatus.FULL:
                 colorStatus = colorFull;
                 TileStatus = E_TileStatus.FULL;
+                //TileManager.ToggleTileStatus += ToggleHighlight;
                 break;
         }
     }
 
-
+    //TODO: gør så tiles kan toggles hvis de ikke er full (tiles forbliver grønne efter fejlet bygning)
 
     public void ToggleHighlight()
     {
@@ -60,11 +63,24 @@ public class Tile : MonoBehaviour {
     public void ToggleHighlight(bool show)
     {
         showTileStatus = show;
-
         if (showTileStatus)
             sprite.color = colorStatus;
         else
             sprite.color = colorDefault;
+    }
+
+
+
+    public void ToggleHighlightFull(bool show)
+    {
+        if(TileStatus == E_TileStatus.FULL)
+        {
+            showTileStatus = show;
+            if (showTileStatus)
+                sprite.color = colorStatus;
+            else
+                sprite.color = colorDefault;
+        }
     }
 
 

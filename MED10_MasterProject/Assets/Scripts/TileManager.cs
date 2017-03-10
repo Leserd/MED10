@@ -10,6 +10,7 @@ public class TileManager : MonoBehaviour {
     public static TileManager instance;
     public delegate void BuildingLocations(bool show);
     public static event BuildingLocations ToggleTileStatus;
+    public static event BuildingLocations ToggleFullTileStatus;
 
     private const float TILE_GRID_X_DIST = 1.95f;
     private const float TILE_GRID_Y_DIST = -0.99f;
@@ -89,6 +90,14 @@ public class TileManager : MonoBehaviour {
         if (ToggleTileStatus != null)
         {
             ToggleTileStatus(b);
+        }
+    }
+
+    public void ToggleFullTileAvailability(bool b)
+    {
+        if (ToggleTileStatus != null)
+        {
+            ToggleFullTileStatus(b);
         }
     }
 }

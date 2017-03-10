@@ -45,6 +45,10 @@ public class Building : MonoBehaviour {
         {
             if (PlayerControls.hoveredTile != hoveredTile)
             {
+                //No longer highlight previous touchingTiles
+                if (touchingTiles.Count > 0)
+                    ToggleHighlightOnTouchingTiles(false); 
+
                 //Update hoveredTile
                 hoveredTile = PlayerControls.hoveredTile;
 
@@ -56,10 +60,17 @@ public class Building : MonoBehaviour {
 
                 //Check whether the building can be built here
                 SetPossibleToBuild(CalculateBuildability());
+
+                //Highlight touchingTiles
+                ToggleHighlightOnTouchingTiles(true);
             }
         }
         else
         {
+            //No longer highlight previous touchingTiles
+            if (touchingTiles.Count > 0)
+                ToggleHighlightOnTouchingTiles(false);
+
             Plane plane = new Plane(Vector3.back, Vector3.zero);
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             float hitdist = 0.0f;
@@ -68,7 +79,6 @@ public class Building : MonoBehaviour {
             {
                 transform.position = ray.GetPoint(hitdist);
             }
-
             SetPossibleToBuild(false);
             hoveredTile = null;
         }
@@ -129,10 +139,22 @@ public class Building : MonoBehaviour {
 
 
 
+    private void ToggleHighlightOnTouchingTiles(bool highlight)
+    {
+        foreach(Tile tile in touchingTiles)
+        {
+            if(tile.TileStatus == E_TileStatus.EMPTY)
+                tile.ToggleHighlight(highlight);
+        }
+    }
+
+
+
     //For now it shows building completeness by changing alpha value of sprite
     public IEnumerator Build()
     {
         sprite.color = Color.white;
+
         GetComponent<EdgeCollider2D>().enabled = false;
 
         float startTime = Time.time;
@@ -244,7 +266,9 @@ public class Building : MonoBehaviour {
         foreach(Tile tile in touchingTiles)
         {
             if (tile.TileStatus == E_TileStatus.FULL)
+            {
                 buildability = false;
+            }
         }
 
         return buildability;
@@ -254,20 +278,29 @@ public class Building : MonoBehaviour {
 
     public void BuildOnTile()
     {
-        foreach(Tile tile in touchingTiles)
+        ToggleHighlightOnTouchingTiles(false);
+
+        if (possibleToBuild)
         {
-            tile.AssignBuilding(BuildManager.buildingToBuild.GetComponent<Building>());
-            tile.ChangeTileStatus(E_TileStatus.FULL);
+            foreach (Tile tile in touchingTiles)
+            {
+                tile.AssignBuilding(BuildManager.buildingToBuild.GetComponent<Building>());
+                tile.ChangeTileStatus(E_TileStatus.FULL);
+            }
+
+            //Update position and sortingOrder, to be sure it is placed properly
+            transform.position = CalculatePosition();
+            sprite.sortingOrder = CalculateSortingOrder();
+
+            //Remove the (disabled) button for this building in the build bar
+            BuildManager.instance.RemoveActiveBuildButton();
+
+            ChangeStatus(E_BuildingStatus.BEING_BUILT);
         }
-
-        //Update position and sortingOrder, to be sure it is placed properly
-        transform.position = CalculatePosition();
-        sprite.sortingOrder = CalculateSortingOrder();
-
-        //Remove the (disabled) button for this building in the build bar
-        BuildManager.instance.RemoveActiveBuildButton();
-
-        ChangeStatus(E_BuildingStatus.BEING_BUILT);
+        else
+        {
+            BuildManager.instance.CancelBuild();
+        }
     }
 }
 
