@@ -14,6 +14,7 @@ public class Tile : MonoBehaviour {
     private Color colorFull = Color.red;
     private Color colorDefault = Color.white;
     private Color colorStatus;
+    public int x, y;
 
 	void Awake() {
         TileStatus = E_TileStatus.EMPTY;
@@ -63,6 +64,13 @@ public class Tile : MonoBehaviour {
     public void AssignBuilding(Building building)
     {
         attachedBuilding = building;
+    }
+
+
+    public void SetTileCoordinates(int x, int y)
+    {
+        this.x = x;
+        this.y = y;
     }
 }
 

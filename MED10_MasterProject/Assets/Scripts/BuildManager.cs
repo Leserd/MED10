@@ -14,6 +14,7 @@ public class BuildManager : MonoBehaviour {
     public GameObject buildingBtnPrefab;                                //Prefab of a building button
     public Transform buildingBtnParent;                                 //The Transform to which all building buttons will be a child
     public GameObject cancelArea;                                       //The area in which the player can drop a building if he does not want to place it anyway
+    
 
 
     private void Awake()
@@ -27,12 +28,17 @@ public class BuildManager : MonoBehaviour {
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            AddBuildingButton(ResourcePaths.HousePrefab);
-            AddBuildingButton(ResourcePaths.SparbucksPrefab);
-            AddBuildingButton(ResourcePaths.MansionPrefab);
+            TestBuildings();
         }
     }
 
+
+    public void TestBuildings()
+    {
+        AddBuildingButton(ResourcePaths.HousePrefab);
+        AddBuildingButton(ResourcePaths.SparbucksPrefab);
+        AddBuildingButton(ResourcePaths.MansionPrefab);
+    }
 
 
     public void StartPlacingBuilding(GameObject buildingButton)

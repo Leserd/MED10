@@ -24,9 +24,9 @@ public class TileManager : MonoBehaviour {
 
     private void Start()
     {
-        //SetUpTileGrid();                              //Spawn tile grid instantly
+        SetUpTileGrid();                              //Spawn tile grid instantly
         //StartCoroutine(SetUpTileGridCoroutine());     //Spawn tile grid over time
-        SetUpTilesByPrefab();                           //Spawn tile grid instantly via prefab
+        //SetUpTilesByPrefab();                           //Spawn tile grid instantly via prefab
     }
 
     private void SetUpTilesByPrefab()
@@ -51,7 +51,8 @@ public class TileManager : MonoBehaviour {
                 SpriteRenderer tile = Instantiate(tilePrefab2D, pos, Quaternion.identity).GetComponent<SpriteRenderer>();
                 tile.transform.name = "Tile(" + x + "/" + (TILE_GRID_Y_SIZE - y) + ")"; 
                 tile.sortingOrder = renderOrder;
-                tiles[x-1, y] = tile.GetComponent<Tile>();
+                tiles[x-1, TILE_GRID_Y_SIZE - y - 1] = tile.GetComponent<Tile>();
+                tile.GetComponent<Tile>().SetTileCoordinates(x - 1, TILE_GRID_Y_SIZE - y - 1);
                 tile.transform.parent = tileParent;
             }
         }
@@ -75,7 +76,8 @@ public class TileManager : MonoBehaviour {
                 SpriteRenderer tile = Instantiate(tilePrefab2D, pos, Quaternion.identity).GetComponent<SpriteRenderer>();
                 tile.transform.name = "Tile(" + x + "/" + (TILE_GRID_Y_SIZE - y) + ")";
                 tile.sortingOrder = renderOrder;
-                tiles[x - 1, y] = tile.GetComponent<Tile>();
+                tiles[x - 1, TILE_GRID_Y_SIZE - y - 1] = tile.GetComponent<Tile>();
+                tile.GetComponent<Tile>().SetTileCoordinates(x - 1, TILE_GRID_Y_SIZE - y - 1);
                 tile.transform.parent = tileParent;
                 yield return new WaitForSeconds(Time.deltaTime / (TILE_GRID_X_SIZE * TILE_GRID_Y_SIZE) / 3);
             }
