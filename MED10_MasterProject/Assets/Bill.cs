@@ -85,7 +85,7 @@ public class Bill : MonoBehaviour {
 
 
         var bills = GameObject.FindGameObjectsWithTag("Bill");
-        if (bills.Length > 2)
+        if (bills.Length > 1)
         {
             foreach (var bill in bills)
             {
@@ -99,8 +99,9 @@ public class Bill : MonoBehaviour {
         }
         else
         {
-            Destroy(bills[1]);
-            bills[0].SetActive(false);
+            Destroy(bills[0]);
+            ActivateGameobject.Instance.Interactable(false);
+ 
         }
 
 
