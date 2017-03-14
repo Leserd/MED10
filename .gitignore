@@ -40,8 +40,5 @@ obj/
 *.opendb
 WSATestCertificate.pfx
 WSATestCertificate.pfx.meta
-<<<<<<< HEAD
-Modelling Physical Systems 2.0/
-=======
 Modelling Physical Systems/
->>>>>>> develop
+Modelling_Physical_Systems/
