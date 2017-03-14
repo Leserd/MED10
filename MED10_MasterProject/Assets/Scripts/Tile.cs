@@ -14,24 +14,21 @@ public class Tile : MonoBehaviour {
     private Color colorFull = Color.red;
     private Color colorDefault = Color.white;
     private Color colorStatus;
+    public int x, y;
+
+
 
 	void Awake() {
         TileStatus = E_TileStatus.EMPTY;
         colorStatus = colorEmpty;
-        //highlightPlane = transform.FindChild("HighlightPlane").GetComponent<MeshRenderer>();
         sprite = GetComponent<SpriteRenderer>();
-
         TileManager.ToggleTileStatus += ToggleHighlight;
+        TileManager.ToggleFullTileStatus += ToggleHighlightFull;
+
+
     }
 
-	//void OnMouseDown() {
- //       //Dont detect clicks if user taps button
- //       if (!EventSystem.current.IsPointerOverGameObject())
- //       {
- //           PlayerControls.instance.TouchTile(this);
- //       }
-        
- //   }
+
 
     public void ChangeTileStatus(E_TileStatus status)
     {
@@ -44,41 +41,64 @@ public class Tile : MonoBehaviour {
             case E_TileStatus.FULL:
                 colorStatus = colorFull;
                 TileStatus = E_TileStatus.FULL;
+                //TileManager.ToggleTileStatus += ToggleHighlight;
                 break;
         }
     }
 
+    //TODO: gør så tiles kan toggles hvis de ikke er full (tiles forbliver grønne efter fejlet bygning)
+
     public void ToggleHighlight()
     {
         showTileStatus = !showTileStatus;
-        //highlightPlane.enabled = showTileStatus;
+
         if (showTileStatus)
             sprite.color = colorStatus;
         else
             sprite.color = colorDefault;
     }
+
+
 
     public void ToggleHighlight(bool show)
     {
         showTileStatus = show;
-        //highlightPlane.enabled = showTileStatus;
         if (showTileStatus)
             sprite.color = colorStatus;
         else
             sprite.color = colorDefault;
     }
 
+
+
+    public void ToggleHighlightFull(bool show)
+    {
+        if(TileStatus == E_TileStatus.FULL)
+        {
+            showTileStatus = show;
+            if (showTileStatus)
+                sprite.color = colorStatus;
+            else
+                sprite.color = colorDefault;
+        }
+    }
+
+
+
     public void AssignBuilding(Building building)
     {
-
         attachedBuilding = building;
-        attachedBuilding.transform.SetParent(CreateBuilding.Instance.transform);
-        attachedBuilding.GetComponent<SpriteRenderer>().sortingOrder = GetComponent<SpriteRenderer>().sortingOrder + 1;
-        ChangeTileStatus(E_TileStatus.FULL);
-        attachedBuilding.GetComponent<BuyBuilding>().ButtonPress(attachedBuilding.transform);
+    }
 
+
+
+    public void SetTileCoordinates(int x, int y)
+    {
+        this.x = x;
+        this.y = y;
     }
 }
+
 
 
 public enum E_TileStatus
