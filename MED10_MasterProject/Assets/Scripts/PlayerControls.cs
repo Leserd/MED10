@@ -18,7 +18,7 @@ public class PlayerControls : MonoBehaviour
 
     //****Touch variables
     public E_TouchStatus TouchStatus { get; set; }
-    private Vector2[] touchPosBegin, touchPosCurrent, touchPosLast;
+    public Vector2[] touchPosBegin, touchPosCurrent, touchPosLast;
     private const float TOUCH_MOVE_DIST_THRESHOLD = 0.9f;
     private bool swiping = false;
 
@@ -55,6 +55,7 @@ public class PlayerControls : MonoBehaviour
     {
 
         //if (!EventSystem.current.IsPointerOverGameObject() && !IsPointerOverUIObject())
+
         if (!IsPointerOverUIObject())
         {
             if (GameManager.IsApp)
@@ -106,9 +107,16 @@ public class PlayerControls : MonoBehaviour
             {
                 pos = Input.mousePosition;
             }
+
+
             touchPosBegin[0] = pos;
             touchPosCurrent[0] = pos;
             touchPosLast[0] = pos;
+
+            //Cancel build in case player attempts to place a building on top of a UI button
+            if((Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended) || Input.GetMouseButtonUp(0)){
+                BuildManager.instance.CancelBuild();
+            }
         }
     }
 
@@ -184,8 +192,8 @@ public class PlayerControls : MonoBehaviour
                         TouchTile(mouseHit.transform.GetComponent<Tile>());
                     }
                 }
-                else
-                    print("NOTHING WAS HIT!");
+                //else
+                //    print("NOTHING WAS HIT!");
             }
         }
         else
@@ -198,9 +206,16 @@ public class PlayerControls : MonoBehaviour
                 {
                     TouchTile(mouseHit.transform.GetComponent<Tile>());
                 }
+                else
+                {
+                    BuildManager.instance.CancelBuild();
+                }
             }
             else
+            {
                 print("NOTHING WAS HIT!");
+                BuildManager.instance.CancelBuild();
+            }
         }
         
     }
@@ -313,9 +328,13 @@ public class PlayerControls : MonoBehaviour
             case E_TouchStatus.BUILD:
                 if (tile.TileStatus == E_TileStatus.EMPTY)
                 {
-                    BuildManager.BuildingToBuild.GetComponent<Building>().BuildOnTile();
+                    BuildManager.buildingToBuild.GetComponent<Building>().BuildOnTile();
 
                     ChangeTouchStatus(E_TouchStatus.IDLE);
+                }
+                else
+                {
+                    BuildManager.instance.CancelBuild();
                 }
                 break;
         }
@@ -341,10 +360,9 @@ public class PlayerControls : MonoBehaviour
                 TileManager.instance.ToggleTileAvailability(false);
                 break;
             case E_TouchStatus.BUILD:
-                TileManager.instance.ToggleTileAvailability(true);
+                TileManager.instance.ToggleFullTileAvailability(true);
                 break;
         }
-        MenuManager.instance.CloseMenues();
     }
 
 

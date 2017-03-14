@@ -14,15 +14,20 @@ public class Tile : MonoBehaviour {
     private Color colorFull = Color.red;
     private Color colorDefault = Color.white;
     private Color colorStatus;
+    public int x, y;
+
+
 
 	void Awake() {
         TileStatus = E_TileStatus.EMPTY;
         colorStatus = colorEmpty;
-        //highlightPlane = transform.FindChild("HighlightPlane").GetComponent<MeshRenderer>();
         sprite = GetComponent<SpriteRenderer>();
-
         TileManager.ToggleTileStatus += ToggleHighlight;
+        TileManager.ToggleFullTileStatus += ToggleHighlightFull;
+
+
     }
+
 
 
     public void ChangeTileStatus(E_TileStatus status)
@@ -36,35 +41,65 @@ public class Tile : MonoBehaviour {
             case E_TileStatus.FULL:
                 colorStatus = colorFull;
                 TileStatus = E_TileStatus.FULL;
+                //TileManager.ToggleTileStatus += ToggleHighlight;
                 break;
         }
     }
 
+    //TODO: gør så tiles kan toggles hvis de ikke er full (tiles forbliver grønne efter fejlet bygning)
+
     public void ToggleHighlight()
     {
         showTileStatus = !showTileStatus;
-        //highlightPlane.enabled = showTileStatus;
+
         if (showTileStatus)
             sprite.color = colorStatus;
         else
             sprite.color = colorDefault;
     }
 
+
+
     public void ToggleHighlight(bool show)
     {
         showTileStatus = show;
-        //highlightPlane.enabled = showTileStatus;
         if (showTileStatus)
             sprite.color = colorStatus;
         else
             sprite.color = colorDefault;
     }
+
+
+
+    public void ToggleHighlightFull(bool show)
+    {
+        if(TileStatus == E_TileStatus.FULL)
+        {
+            showTileStatus = show;
+            if (showTileStatus)
+                sprite.color = colorStatus;
+            else
+                sprite.color = colorDefault;
+        }
+    }
+
+
 
     public void AssignBuilding(Building building)
     {
         attachedBuilding = building;
     }
+
+
+
+    public void SetTileCoordinates(int x, int y)
+    {
+        this.x = x;
+        this.y = y;
+    }
 }
+
+
 
 public enum E_TileStatus
 {

@@ -5,10 +5,12 @@ using UnityEngine;
 public class TileManager : MonoBehaviour {
 
     public GameObject tilePrefab2D;
+    public GameObject tileGridPrefab2D;
     public Tile[,] tiles;
     public static TileManager instance;
     public delegate void BuildingLocations(bool show);
     public static event BuildingLocations ToggleTileStatus;
+    public static event BuildingLocations ToggleFullTileStatus;
 
     private const float TILE_GRID_X_DIST = 1.95f;
     private const float TILE_GRID_Y_DIST = -0.99f;
@@ -23,8 +25,14 @@ public class TileManager : MonoBehaviour {
 
     private void Start()
     {
-        //SetUpTileGrid();                              //Spawn tile grid instantly
-        StartCoroutine(SetUpTileGridCoroutine());       //Spawn tile grid over time
+        SetUpTileGrid();                              //Spawn tile grid instantly
+        //StartCoroutine(SetUpTileGridCoroutine());     //Spawn tile grid over time
+        //SetUpTilesByPrefab();                           //Spawn tile grid instantly via prefab
+    }
+
+    private void SetUpTilesByPrefab()
+    {
+        Instantiate(tileGridPrefab2D);
     }
 
     private void SetUpTileGrid()
@@ -44,7 +52,8 @@ public class TileManager : MonoBehaviour {
                 SpriteRenderer tile = Instantiate(tilePrefab2D, pos, Quaternion.identity).GetComponent<SpriteRenderer>();
                 tile.transform.name = "Tile(" + x + "/" + (TILE_GRID_Y_SIZE - y) + ")"; 
                 tile.sortingOrder = renderOrder;
-                tiles[x-1, y] = tile.GetComponent<Tile>();
+                tiles[x-1, TILE_GRID_Y_SIZE - y - 1] = tile.GetComponent<Tile>();
+                tile.GetComponent<Tile>().SetTileCoordinates(x - 1, TILE_GRID_Y_SIZE - y - 1);
                 tile.transform.parent = tileParent;
             }
         }
@@ -68,7 +77,8 @@ public class TileManager : MonoBehaviour {
                 SpriteRenderer tile = Instantiate(tilePrefab2D, pos, Quaternion.identity).GetComponent<SpriteRenderer>();
                 tile.transform.name = "Tile(" + x + "/" + (TILE_GRID_Y_SIZE - y) + ")";
                 tile.sortingOrder = renderOrder;
-                tiles[x - 1, y] = tile.GetComponent<Tile>();
+                tiles[x - 1, TILE_GRID_Y_SIZE - y - 1] = tile.GetComponent<Tile>();
+                tile.GetComponent<Tile>().SetTileCoordinates(x - 1, TILE_GRID_Y_SIZE - y - 1);
                 tile.transform.parent = tileParent;
                 yield return new WaitForSeconds(Time.deltaTime / (TILE_GRID_X_SIZE * TILE_GRID_Y_SIZE) / 3);
             }
@@ -80,6 +90,14 @@ public class TileManager : MonoBehaviour {
         if (ToggleTileStatus != null)
         {
             ToggleTileStatus(b);
+        }
+    }
+
+    public void ToggleFullTileAvailability(bool b)
+    {
+        if (ToggleTileStatus != null)
+        {
+            ToggleFullTileStatus(b);
         }
     }
 }
