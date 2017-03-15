@@ -49,7 +49,6 @@ public class IntroductionMenu : MonoBehaviour {
             AssignCurrentTouchPosition();
             AssignLastTouchPosition();
             dragging = true;
-            print("BeginDrag");
         }
         
     }
@@ -68,6 +67,8 @@ public class IntroductionMenu : MonoBehaviour {
             if (distance < 0)
                 dir = 1;
 
+
+
             if(dir == -1 && currentImageIndex == 0 && (Vector2)imagePanel.rectTransform.localPosition == imagePositions[currentImageIndex]) //if trying to swipe to a side that has no additional image
             {
                 return;
@@ -78,14 +79,19 @@ public class IntroductionMenu : MonoBehaviour {
             }
             else
             {
-                imagePanel.rectTransform.position = Vector3.Lerp(imagePanel.rectTransform.position,
-                imagePanel.rectTransform.position + new Vector3(distance, 0, 0),
-                Time.deltaTime * 1f);
+                Vector3 newPosition = Vector3.Lerp(imagePanel.rectTransform.position,
+                    imagePanel.rectTransform.position + new Vector3(distance, 0, 0),
+                    Time.deltaTime * 1f);
+
+                //Clamp x value of new position so it does not extend too far from what is possible. DOES NOT WORK
+                //float clampedX = Mathf.Clamp(newPosition.x, imagePositions[currentImageIndex].x - _imageSpacing, imagePositions[currentImageIndex].x + _imageSpacing);
+                //newPosition = new Vector3(clampedX, newPosition.y, newPosition.z);
+
+                imagePanel.rectTransform.position = newPosition;
             }
             
 
             AssignLastTouchPosition();
-            print("Dragging");
         }
     }
 
@@ -122,7 +128,6 @@ public class IntroductionMenu : MonoBehaviour {
             }
 
             dragging = false;
-            print("EndDrag");
         }
     }
 
@@ -159,7 +164,6 @@ public class IntroductionMenu : MonoBehaviour {
 
         //Update currentImage
         currentImageIndex += direction;
-        print("Current; " + currentImageIndex + ", Count: " + images.Count);
         currentImage = images[currentImageIndex];
 
         //Enable new currentImage
