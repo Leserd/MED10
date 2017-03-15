@@ -39,10 +39,6 @@ public class IntroductionMenu : MonoBehaviour {
         }
     }
 
-    private void Update()
-    {
-        
-    }
 
 
     public void BeginDrag()
@@ -204,11 +200,14 @@ public class IntroductionMenu : MonoBehaviour {
         imagePanel.rectTransform.localPosition = endPosition;
         //enable swiping
         canSwipe = true;
-
-
     }
 
 
+
+    public void StartGame()
+    {
+        gameObject.SetActive(false);
+    }
 
 
     private void AssignStartTouchPosition()
