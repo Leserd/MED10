@@ -8,10 +8,11 @@ public class Bill : MonoBehaviour {
     public Text BillName;
     public InputField BillAmount;
     public Dropdown Category;
+    public Dropdown SubCategory;
     public ToggleGroup Frequency;
     public Button Finished;
 
-    private bool _isActive, _choseCategory, _choseFrequency;
+    private bool _isActive, _choseCategory,_choseSubCategory, _choseFrequency;
     private BetalingsServiceData BPS;
     private string _toggleNumber;
     public List<Toggle> Toggles;
@@ -21,15 +22,25 @@ public class Bill : MonoBehaviour {
     {
         BPS = BetalingsServiceData.Instance;
         Frequency.allowSwitchOff = true;
-        Finished.onClick.AddListener(() => Test());
+        Finished.onClick.AddListener(() => AddToBPS());
         Category.onValueChanged.AddListener(delegate { CategoryChosen(); });
+        SubCategory.onValueChanged.AddListener(delegate { SubCategoryChosen(); });
         foreach (var togle in Toggles)
         {
             togle.onValueChanged.AddListener(delegate { GetActiveToggle(togle.isOn, togle); });
         }
     }
 
-
+    private void SubCategoryChosen()
+    {
+        if (SubCategory.value != 0)
+        {
+            _choseSubCategory = true;
+            FinishedBill();
+            return;
+        }
+        _choseSubCategory = false;
+    }
 
     
     private void CategoryChosen()
@@ -58,29 +69,13 @@ public class Bill : MonoBehaviour {
             FinishedBill();
         }
 
-
-
-        /*
-        if (Frequency.AnyTogglesOn())
-        {
-
-            foreach (var item in Frequency.ActiveToggles())
-            {
-                _choseFrequency = true;
-                FinishedBill();
-                _toggleNumber = item.name; 
-                break;
-            }
-            return;
-        }
-        _choseFrequency = false;*/
     }
 
 
 
-    private void Test()
+    private void AddToBPS()
     {
-        BPS.AddToCurrentExpenses(BillName.text, float.Parse(BillAmount.text), int.Parse(_toggleNumber), Category.captionText.text);
+        BPS.AddToCurrentExpenses(BillName.text, float.Parse(BillAmount.text), int.Parse(_toggleNumber), Category.captionText.text, SubCategory.captionText.text);
         gameObject.SetActive(false);
 
 
@@ -89,7 +84,6 @@ public class Bill : MonoBehaviour {
         {
             foreach (var bill in bills)
             {
-
                 if (bill.name == BillName.text)
                 {
                     Destroy(bill);
@@ -100,25 +94,19 @@ public class Bill : MonoBehaviour {
         else
         {
             Destroy(bills[0]);
-            ActivateGameobject.Instance.Interactable(false);
- 
+            ActivateGameobject.Instance.Interactable(false); 
         }
-
-
 
         transform.parent.gameObject.SetActive(false);
-        foreach (var item in BPS.GetAllPaymentServices())
-        {
-            Debug.Log(item.Info());
-        }
+
         Destroy(this);
-        //Debug.Log(BPS.GetPaymentservices(0).Info());
+        Debug.Log(BPS.GetPaymentservices(0).Info());
 
     }
 
     void FinishedBill()
     {
-        if (_choseFrequency && _choseCategory)
+        if (_choseFrequency && _choseCategory &&_choseSubCategory)
         {
             Finished.interactable = true;
             return;
