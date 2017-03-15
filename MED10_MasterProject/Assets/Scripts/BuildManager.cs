@@ -20,6 +20,12 @@ public class BuildManager : MonoBehaviour {
     private void Awake()
     {
         instance = this;
+        BetalingsServiceData.newBill += CreateBuilding;
+    }
+
+    void CreateBuilding(BetalingsServiceData.BSData data)
+    {
+        AddBuildingButton("Prefabs/Lasse/" + data.SubCategory);
     }
 
 

@@ -62,7 +62,7 @@ public class BetalingsServiceData : MonoBehaviour {
         public float MonthlyExpence;// { get {return monthlyExpence } set { monthlyExpence = Expense / PaymentsPerYear; } }
         string StartingMonth;
         string Category;
-        string SubCategory;
+        public string SubCategory;
 
 
         public BSData (string transactionName, int id, float expense, int paymentsPerYear, string category, string subCategory, string startingMonth)
