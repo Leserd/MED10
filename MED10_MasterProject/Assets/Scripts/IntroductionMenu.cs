@@ -23,8 +23,8 @@ public class IntroductionMenu : MonoBehaviour {
     public float timeToMoveImage = 0.5f;        //Time for the image to move to the new position 
 
     private Vector2 _panelStartPos;
-    private int _imageWidth = 175;
-    private int _imageSpacing = 10;
+    private int _imageWidth = 900;
+    private int _imageSpacing = 50;
     
 
 	// Use this for initialization
@@ -79,9 +79,13 @@ public class IntroductionMenu : MonoBehaviour {
             }
             else
             {
+                float speed = 1f;
+                if (GameManager.IsApp)  //it is muchh faster on the phone at the moment
+                    speed = 0.3f;
+
                 Vector3 newPosition = Vector3.Lerp(imagePanel.rectTransform.position,
                     imagePanel.rectTransform.position + new Vector3(distance, 0, 0),
-                    Time.deltaTime * 1f);
+                    Time.deltaTime * speed);
 
                 //Clamp x value of new position so it does not extend too far from what is possible. DOES NOT WORK
                 //float clampedX = Mathf.Clamp(newPosition.x, imagePositions[currentImageIndex].x - _imageSpacing, imagePositions[currentImageIndex].x + _imageSpacing);
