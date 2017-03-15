@@ -13,7 +13,7 @@ public class HintManager : MonoBehaviour {
 	void Update () {
         if (Input.GetKeyDown(KeyCode.H))
         {
-            new Hint("Sprites/Hints/NotAvailableSprite", new Vector3(50,-50,0));
+            new Hint("Sprites/Hints/VelkomstBaggrund", new Vector3(50,-50,0));
         }
 	}
 }

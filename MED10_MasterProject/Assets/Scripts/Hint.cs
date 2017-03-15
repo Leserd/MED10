@@ -8,6 +8,7 @@ public class Hint {
     private Sprite _sprite;
     private Button _hintObj;
    
+    //Mangler mulighed for at sige hvad beskeden er
 
     public Hint(string spritePath, Vector3 position)
     {
@@ -16,9 +17,14 @@ public class Hint {
         _hintObj = newBtn.GetComponent<Button>();
 
         //Assign sprite to hint
+        if ( Resources.Load<Sprite>(spritePath))
+        {
+            Debug.Log("loaded sprite");
+        }
         Sprite = Resources.Load<Sprite>(spritePath);
 
         //AddListener to button
+        //Burde der ikke bare være en der lytter efter touch input her og laver destroy når der bliver trykket et eller andet sted?
         _hintObj.onClick.AddListener(() => DestroyHint());
 
         //Change position
@@ -58,7 +64,11 @@ public class Hint {
         {
             _sprite = value;
             if (_sprite)
+            {
                 _hintObj.GetComponent<Image>().sprite = _sprite;
+                var recttrans = _hintObj.transform as RectTransform;
+                recttrans.sizeDelta = new Vector2(_sprite.textureRect.width, _sprite.textureRect.height);
+            }
             else
                 return;
         }
@@ -79,12 +89,3 @@ public class Hint {
     }
 }
 
-
-public enum E_HintDirection
-{
-    NONE,
-    UP,
-    RIGHT,
-    DOWN,
-    LEFT
-}
