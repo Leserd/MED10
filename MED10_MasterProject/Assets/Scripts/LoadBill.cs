@@ -16,10 +16,10 @@ public class LoadBill : MonoBehaviour {
         foreach (var Name in Data.LasseTestData)
         {
             var bill = Instantiate(BillTextObject, ParentTransform.transform);
-            bill.transform.localScale = Vector3.one;
+            bill.transform.localScale = bill.transform.localScale*1.3f;
             bill.tag = "Bill";
             bill.name = Name.BSDataName;
-            bill.GetComponent<Text>().text = Name.BSDataName;
+            bill.GetComponentInChildren<Text>().text = Name.BSDataName;
             bill.SetActive(true);
             bill.AddComponent<Button>().onClick.AddListener(() => LookAtBill(Name));
             

@@ -98,8 +98,13 @@ public class Bill : MonoBehaviour {
         else
         {
             Destroy(bills[0]);
-            LastBill();
-            ActivateGameobject.Instance.Interactable(false); 
+            if (LastBill != null)
+            {
+                LastBill();
+
+            }
+            //ActivateGameobject.Instance.GetComponent<Image>().sprite = 
+            ActivateGameobject.Instance.BillsFinished(false); 
         }
 
         transform.parent.gameObject.SetActive(false);
