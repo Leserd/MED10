@@ -5,6 +5,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class Bill : MonoBehaviour {
+
+    public delegate void D_LastBill();
+    public static event D_LastBill LastBill;
+
     public Text BillName;
     public InputField BillAmount;
     public Dropdown Category;
@@ -94,6 +98,7 @@ public class Bill : MonoBehaviour {
         else
         {
             Destroy(bills[0]);
+            LastBill();
             ActivateGameobject.Instance.Interactable(false); 
         }
 

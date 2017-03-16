@@ -17,10 +17,6 @@ public class Hint {
         _hintObj = newBtn.GetComponent<Button>();
 
         //Assign sprite to hint
-        if ( Resources.Load<Sprite>(spritePath))
-        {
-            Debug.Log("loaded sprite");
-        }
         Sprite = Resources.Load<Sprite>(spritePath);
 
         //AddListener to button
