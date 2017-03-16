@@ -14,7 +14,10 @@ public class BuildManager : MonoBehaviour {
     public GameObject buildingBtnPrefab;                                //Prefab of a building button
     public Transform buildingBtnParent;                                 //The Transform to which all building buttons will be a child
     public GameObject cancelArea;                                       //The area in which the player can drop a building if he does not want to place it anyway
-    
+    private bool _firstBuildingButton = true;                           //Should we show the hint when button is created
+    public static bool firstBuildingToBePlaced = true;                 //Should we show a hint when the first building is created ("There are more bills")
+    public static bool lastBuildingToBePlaced = false;                 //Should we show a hint when the last building is created ("Youre done!")
+
 
 
     private void Awake()
@@ -22,6 +25,8 @@ public class BuildManager : MonoBehaviour {
         instance = this;
         BetalingsServiceData.newBill += CreateBuilding;
     }
+
+
 
     void CreateBuilding(BetalingsServiceData.BSData data)
     {
@@ -129,6 +134,12 @@ public class BuildManager : MonoBehaviour {
         {
             Debug.Log("The path: " + buildingPath + " returns no object");
             return;
+        }
+
+        if (_firstBuildingButton)
+        {
+            new Hint("Sprites/Hints/FirstBuildingButtonHint", new Vector3(-100, -350f));
+            _firstBuildingButton = false;
         }
 
         //Instantiate the new button

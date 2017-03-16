@@ -296,6 +296,18 @@ public class Building : MonoBehaviour {
             BuildManager.instance.RemoveActiveBuildButton();
 
             ChangeStatus(E_BuildingStatus.BEING_BUILT);
+
+            //Show hints if necessary
+            if (BuildManager.firstBuildingToBePlaced)
+            {
+                new Hint("Sprites/Hints/FirstBuildingPlacedHint", new Vector3(0, 300));
+                BuildManager.firstBuildingToBePlaced = false;
+            }
+            if (BuildManager.lastBuildingToBePlaced)
+            {
+                new Hint("Sprites/Hints/LastBuildingPlacedHint", new Vector3(0, 450));
+                BuildManager.lastBuildingToBePlaced = false;
+            }
         }
         else
         {
