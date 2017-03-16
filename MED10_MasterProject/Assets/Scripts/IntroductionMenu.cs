@@ -79,7 +79,7 @@ public class IntroductionMenu : MonoBehaviour {
             }
             else
             {
-                float speed = 1f;
+                float speed = 20f;
                 if (GameManager.IsApp)  //it is muchh faster on the phone at the moment
                     speed = 0.3f;
 
