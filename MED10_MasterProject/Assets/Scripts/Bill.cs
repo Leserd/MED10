@@ -18,24 +18,25 @@ public class Bill : MonoBehaviour {
 
     private bool _isActive, _choseCategory,_choseSubCategory, _choseFrequency;
     private BetalingsServiceData BPS;
-    private string _toggleNumber;
+    private string _toggleNumber, _categoryName,_subCategoryName;
     public List<Toggle> Toggles;
 
 
     private void Awake()
     {
+        CategoryButton.CategoryPress += CategoryChosen;
         BPS = BetalingsServiceData.Instance;
         Frequency.allowSwitchOff = true;
         Finished.onClick.AddListener(() => AddToBPS());
-        Category.onValueChanged.AddListener(delegate { CategoryChosen(); });
-        SubCategory.onValueChanged.AddListener(delegate { SubCategoryChosen(); });
+        //Category.onValueChanged.AddListener(delegate { CategoryChosen(); });
+        //SubCategory.onValueChanged.AddListener(delegate { SubCategoryChosen(); });
         foreach (var togle in Toggles)
         {
             togle.onValueChanged.AddListener(delegate { GetActiveToggle(togle.isOn, togle); });
         }
     }
 
-    private void SubCategoryChosen()
+/*private void SubCategoryChosen()
     {
         if (SubCategory.value != 0)
         {
@@ -44,19 +45,15 @@ public class Bill : MonoBehaviour {
             return;
         }
         _choseSubCategory = false;
-    }
+    }*/
 
     
-    private void CategoryChosen()
+    private void CategoryChosen(CategoryButton.CategoryName categoryNames)
     {
-        if (Category.value != 0)
-        {
-            _choseCategory = true;
-            FinishedBill();
-            return;
-        }
-        _choseCategory = false;
-
+        _categoryName = categoryNames.Category;
+        _subCategoryName = categoryNames.SubCategory;
+        _choseCategory = true;
+        FinishedBill();
     }
 
     void GetActiveToggle(bool toggleOn, Toggle changedToggle)
@@ -116,7 +113,7 @@ public class Bill : MonoBehaviour {
 
     void FinishedBill()
     {
-        if (_choseFrequency && _choseCategory &&_choseSubCategory)
+        if (_choseFrequency && _choseCategory)
         {
             Finished.interactable = true;
             return;
