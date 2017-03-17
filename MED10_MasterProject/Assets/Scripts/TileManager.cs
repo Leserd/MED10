@@ -12,10 +12,10 @@ public class TileManager : MonoBehaviour {
     public static event BuildingLocations ToggleTileStatus;
     public static event BuildingLocations ToggleFullTileStatus;
 
-    private const float TILE_GRID_X_DIST = 1.95f;
-    private const float TILE_GRID_Y_DIST = -0.99f;
-    private const int TILE_GRID_X_SIZE = 12;
-    private const int TILE_GRID_Y_SIZE = 8;
+    private const float TILE_GRID_X_DIST = 0.93f;
+    private const float TILE_GRID_Y_DIST = -0.54f;
+    private const int TILE_GRID_X_SIZE = 6;
+    private const int TILE_GRID_Y_SIZE = 6;
 
     private void Awake()
     {
@@ -25,9 +25,9 @@ public class TileManager : MonoBehaviour {
 
     private void Start()
     {
-        SetUpTileGrid();                              //Spawn tile grid instantly
+        //SetUpTileGrid();                              //Spawn tile grid instantly
         //StartCoroutine(SetUpTileGridCoroutine());     //Spawn tile grid over time
-        //SetUpTilesByPrefab();                           //Spawn tile grid instantly via prefab
+        SetUpTilesByPrefab();                           //Spawn tile grid instantly via prefab
     }
 
     private void SetUpTilesByPrefab()
@@ -37,9 +37,9 @@ public class TileManager : MonoBehaviour {
 
     private void SetUpTileGrid()
     {
-        Vector3 startPos = new Vector3(0, 0, 0);
+        Vector3 startPos = new Vector3(-(TILE_GRID_X_DIST * TILE_GRID_X_SIZE / 2), 0, 0);
         int renderOrder = (TILE_GRID_X_SIZE * TILE_GRID_Y_SIZE) * (-1);
-        Transform tileParent = new GameObject("Tiles").transform;
+        Transform tileParent = new GameObject("TileGrid").transform;
        
         for (int y = 0; y < TILE_GRID_Y_SIZE; y++)
         {
@@ -62,9 +62,9 @@ public class TileManager : MonoBehaviour {
     //If we want the grid to be placed over time instead of instantly
     private IEnumerator SetUpTileGridCoroutine()
     {
-        Vector3 startPos = new Vector3(0, 0, 0);
+        Vector3 startPos = new Vector3(-(TILE_GRID_X_DIST * TILE_GRID_X_SIZE / 2), 0, 0);
         int renderOrder = (TILE_GRID_X_SIZE * TILE_GRID_Y_SIZE) * (-1);
-        Transform tileParent = new GameObject("Tiles").transform;
+        Transform tileParent = new GameObject("TileGrid").transform;
 
         for (int y = 0; y < TILE_GRID_Y_SIZE; y++)
         {
@@ -84,6 +84,15 @@ public class TileManager : MonoBehaviour {
             }
         }
     }
+
+
+    //Called by tiles, for when the tile grid is spawned as a prefab and the tiles list therefore is not set up properly
+    public void SetTileListCoords(Tile tile, int x, int y)
+    {
+        if(tiles[x,y] == null)
+            tiles[x, y] = tile;
+    }
+
 
     public void ToggleTileAvailability(bool b)
     {

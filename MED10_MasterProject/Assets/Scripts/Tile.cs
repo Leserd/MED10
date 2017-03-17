@@ -5,7 +5,8 @@ using UnityEngine.EventSystems;
 
 public class Tile : MonoBehaviour {
 
-    public E_TileStatus TileStatus { get; set; }
+    public E_TileStatus TileStatus;
+    private E_TileStatus _tileStatus;
     private Building attachedBuilding;
     public bool showTileStatus = false;
     private SpriteRenderer sprite;
@@ -16,11 +17,14 @@ public class Tile : MonoBehaviour {
     private Color colorStatus;
     public int x, y;
 
+    
 
+    void Awake() {
+        if (TileStatus == E_TileStatus.EMPTY)
+            colorStatus = colorEmpty;
+        else
+            colorStatus = colorFull;
 
-	void Awake() {
-        TileStatus = E_TileStatus.EMPTY;
-        colorStatus = colorEmpty;
         sprite = GetComponent<SpriteRenderer>();
         TileManager.ToggleTileStatus += ToggleHighlight;
         TileManager.ToggleFullTileStatus += ToggleHighlightFull;
@@ -28,6 +32,10 @@ public class Tile : MonoBehaviour {
 
     }
 
+    private void Start()
+    {
+        TileManager.instance.SetTileListCoords(this, x, y);
+    }
 
 
     public void ChangeTileStatus(E_TileStatus status)

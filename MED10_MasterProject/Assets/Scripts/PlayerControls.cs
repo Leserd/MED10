@@ -24,10 +24,10 @@ public class PlayerControls : MonoBehaviour
 
     //****Camera variables
     private Camera cam;
-    private const float CAM_MAX_Y = 4;
-    private const float CAM_MIN_Y = -3;
-    private const float CAM_MAX_X = 18;
-    private const float CAM_MIN_X = 2;
+    private const float CAM_MAX_Y = 2;
+    private const float CAM_MIN_Y = -2;
+    private const float CAM_MAX_X = 2;
+    private const float CAM_MIN_X = -2;
     private const float CAM_ZOOM_MIN = 2.5f;
     private const float CAM_ZOOM_MAX = 7.5f;
     private const float CAM_DRAG_SPEED = 150;

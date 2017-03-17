@@ -9,7 +9,7 @@ public class BuildManager : MonoBehaviour {
     public static BuildManager instance;
 	public static GameObject buildingToBuild { get; set; }              //Building (prefab) the player is currenty trying to place 
     public static GameObject activeBuildButton;                         //Building (button) the player is currently trying to place
-    public static Vector3 buildingOffset = new Vector3(0, 0.55f, 0);    //Offset for buildings so they are correctly shown on tiles
+    public static Vector3 buildingOffset = new Vector3(-0.03f, 0.4f, 0);    //Offset for buildings so they are correctly shown on tiles
     public List<Button> availableBuildings = new List<Button>();        //List of buttons available on the Build bar
     public GameObject buildingBtnPrefab;                                //Prefab of a building button
     public Transform buildingBtnParent;                                 //The Transform to which all building buttons will be a child
@@ -46,9 +46,9 @@ public class BuildManager : MonoBehaviour {
 
     public void TestBuildings()
     {
-        AddBuildingButton(ResourcePaths.HousePrefab);
-        AddBuildingButton(ResourcePaths.SparbucksPrefab);
-        AddBuildingButton(ResourcePaths.MansionPrefab);
+        AddBuildingButton("Prefabs/Lasse/Husleje");
+        AddBuildingButton("Prefabs/Lasse/El");
+        AddBuildingButton("Prefabs/Lasse/Husleje");
     }
 
 
