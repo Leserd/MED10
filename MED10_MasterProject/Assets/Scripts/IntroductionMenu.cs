@@ -37,8 +37,13 @@ public class IntroductionMenu : MonoBehaviour {
         {
             imagePositions.Add(_panelStartPos + new Vector2(-i * (_imageSpacing + _imageWidth), 0));
         }
-    }
 
+        for(int i = 0; i < imageDots.Count; i++)
+        {
+            int pos = i;
+            imageDots[i].GetComponent<Button>().onClick.AddListener(() => StartCoroutine(MoveImageToNewPosition(pos)));
+        }
+    }
 
 
     public void BeginDrag()
@@ -117,7 +122,7 @@ public class IntroductionMenu : MonoBehaviour {
 
                 if (currentImageIndex + dir < images.Count && currentImageIndex + dir >= 0)    
                 {
-                    StartCoroutine(MoveImageToNewPosition(dir));
+                    StartCoroutine(MoveImageToNewPosition(currentImageIndex + dir));
                     
                 }
                 else
@@ -137,11 +142,11 @@ public class IntroductionMenu : MonoBehaviour {
 
 
 
-    private IEnumerator MoveImageToNewPosition(int direction)
+    private IEnumerator MoveImageToNewPosition(int newImageIndex)
     {
         canSwipe = false;
         Vector2 startPosition = imagePanel.rectTransform.localPosition;
-        Vector2 endPosition = imagePositions[currentImageIndex + direction];
+        Vector2 endPosition = imagePositions[newImageIndex];
 
         float currentLerpTime = 0f;
 
@@ -167,7 +172,7 @@ public class IntroductionMenu : MonoBehaviour {
         imageDots[currentImageIndex].sprite = dotInactive;
 
         //Update currentImage
-        currentImageIndex += direction;
+        currentImageIndex = newImageIndex;
         currentImage = images[currentImageIndex];
 
         //Enable new currentImage
@@ -179,6 +184,9 @@ public class IntroductionMenu : MonoBehaviour {
 
 
     }
+
+
+
 
 
     private IEnumerator ReturnImageToPosition()
