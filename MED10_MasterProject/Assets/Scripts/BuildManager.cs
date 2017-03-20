@@ -18,6 +18,8 @@ public class BuildManager : MonoBehaviour {
     public static bool firstBuildingToBePlaced = true;                 //Should we show a hint when the first building is created ("There are more bills")
     public static bool lastBuildingToBePlaced = false;                 //Should we show a hint when the last building is created ("Youre done!")
 
+    public delegate void D_LastBuilding();
+    public static event D_LastBuilding LastBuildingPlaced;
 
 
     private void Awake()
@@ -35,11 +37,21 @@ public class BuildManager : MonoBehaviour {
 
 
 
+    public void AnnounceLastBuilding()
+    {
+        if(LastBuildingPlaced != null)
+        {
+            LastBuildingPlaced();
+        }
+    }
+
+
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            TestBuildings();
+            AnnounceLastBuilding();
         }
     }
 

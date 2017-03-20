@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class IntroductionMenu : MonoBehaviour {
+public class SwipeMenu : MonoBehaviour {
 
     public EventSystem eventSystem;
     public Image imagePanel;                    //The direct parent of the images that are scrolled between
@@ -23,8 +23,8 @@ public class IntroductionMenu : MonoBehaviour {
     public float timeToMoveImage = 0.5f;        //Time for the image to move to the new position 
 
     private Vector2 _panelStartPos;
-    private int _imageWidth = 900;
-    private int _imageSpacing = 50;
+    public int imageWidth = 900;
+    public int imageSpacing = 50;
     
 
 	// Use this for initialization
@@ -35,7 +35,7 @@ public class IntroductionMenu : MonoBehaviour {
 
         for(int i = 0; i < images.Count; i++)
         {
-            imagePositions.Add(_panelStartPos + new Vector2(-i * (_imageSpacing + _imageWidth), 0));
+            imagePositions.Add(_panelStartPos + new Vector2(-i * (imageSpacing + imageWidth), 0));
         }
 
         for(int i = 0; i < imageDots.Count; i++)
@@ -184,9 +184,6 @@ public class IntroductionMenu : MonoBehaviour {
 
 
     }
-
-
-
 
 
     private IEnumerator ReturnImageToPosition()
