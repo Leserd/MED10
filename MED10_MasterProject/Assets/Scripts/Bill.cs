@@ -11,31 +11,32 @@ public class Bill : MonoBehaviour {
 
     public Text BillName;
     public InputField BillAmount;
-    public Dropdown Category;
-    public Dropdown SubCategory;
+   // public Dropdown Category;
+   // public Dropdown SubCategory;
     public ToggleGroup Frequency;
     public Button Finished;
 
     private bool _isActive, _choseCategory,_choseSubCategory, _choseFrequency;
     private BetalingsServiceData BPS;
-    private string _toggleNumber;
+    private string _toggleNumber, _categoryName,_subCategoryName;
     public List<Toggle> Toggles;
 
 
     private void Awake()
     {
+        CategoryButton.CategoryPress += CategoryChosen;
         BPS = BetalingsServiceData.Instance;
         Frequency.allowSwitchOff = true;
         Finished.onClick.AddListener(() => AddToBPS());
-        Category.onValueChanged.AddListener(delegate { CategoryChosen(); });
-        SubCategory.onValueChanged.AddListener(delegate { SubCategoryChosen(); });
+        //Category.onValueChanged.AddListener(delegate { CategoryChosen(); });
+        //SubCategory.onValueChanged.AddListener(delegate { SubCategoryChosen(); });
         foreach (var togle in Toggles)
         {
             togle.onValueChanged.AddListener(delegate { GetActiveToggle(togle.isOn, togle); });
         }
     }
 
-    private void SubCategoryChosen()
+/*private void SubCategoryChosen()
     {
         if (SubCategory.value != 0)
         {
@@ -44,19 +45,15 @@ public class Bill : MonoBehaviour {
             return;
         }
         _choseSubCategory = false;
-    }
+    }*/
 
     
-    private void CategoryChosen()
+    private void CategoryChosen(string category, string subCatogry)
     {
-        if (Category.value != 0)
-        {
-            _choseCategory = true;
-            FinishedBill();
-            return;
-        }
-        _choseCategory = false;
-
+        _categoryName = category;
+        _subCategoryName = subCatogry;
+        _choseCategory = true;
+        FinishedBill();
     }
 
     void GetActiveToggle(bool toggleOn, Toggle changedToggle)
@@ -79,7 +76,7 @@ public class Bill : MonoBehaviour {
 
     private void AddToBPS()
     {
-        BPS.AddToCurrentExpenses(BillName.text, float.Parse(BillAmount.text), int.Parse(_toggleNumber), Category.captionText.text, SubCategory.captionText.text);
+        BPS.AddToCurrentExpenses(BillName.text, float.Parse(BillAmount.text), int.Parse(_toggleNumber),_categoryName,_subCategoryName);
         gameObject.SetActive(false);
 
 
@@ -116,7 +113,7 @@ public class Bill : MonoBehaviour {
 
     void FinishedBill()
     {
-        if (_choseFrequency && _choseCategory &&_choseSubCategory)
+        if (_choseFrequency && _choseCategory)
         {
             Finished.interactable = true;
             return;

@@ -220,6 +220,7 @@ public class SwipeMenu : MonoBehaviour {
     public void StartGame()
     {
         gameObject.SetActive(false);
+        new Hint("asdfghj", new Vector3(140f,580f,0));
     }
 
 
