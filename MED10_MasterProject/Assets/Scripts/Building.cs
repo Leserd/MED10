@@ -306,6 +306,7 @@ public class Building : MonoBehaviour {
             if (BuildManager.lastBuildingToBePlaced)
             {
                 new Hint("Sprites/Hints/LastBuildingPlacedHint", new Vector3(0, 450));
+                BuildManager.instance.AnnounceLastBuilding();
                 BuildManager.lastBuildingToBePlaced = false;
             }
         }

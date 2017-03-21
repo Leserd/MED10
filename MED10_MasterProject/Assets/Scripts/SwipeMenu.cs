@@ -84,9 +84,9 @@ public class SwipeMenu : MonoBehaviour {
             }
             else
             {
-                float speed = 20f;
-                if (GameManager.IsApp)  //it is muchh faster on the phone at the moment
-                    speed = 0.3f;
+                float speed = 60f;
+                //if (GameManager.IsApp)  //it is muchh faster on the phone at the moment
+                //    speed *= 0.3f;
 
                 Vector3 newPosition = Vector3.Lerp(imagePanel.rectTransform.position,
                     imagePanel.rectTransform.position + new Vector3(distance, 0, 0),

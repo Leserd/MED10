@@ -26,6 +26,7 @@ public class BuildManager : MonoBehaviour {
     {
         instance = this;
         BetalingsServiceData.newBill += CreateBuilding;
+        Bill.LastBill += SetLastBuildingToBePlaced;
     }
 
 
@@ -33,6 +34,12 @@ public class BuildManager : MonoBehaviour {
     void CreateBuilding(BetalingsServiceData.BSData data)
     {
         AddBuildingButton("Prefabs/Lasse/" + data.SubCategory);
+    }
+
+
+    void SetLastBuildingToBePlaced()
+    {
+        lastBuildingToBePlaced = true;
     }
 
 
@@ -51,7 +58,7 @@ public class BuildManager : MonoBehaviour {
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            AnnounceLastBuilding();
+            TestBuildings();
         }
     }
 
