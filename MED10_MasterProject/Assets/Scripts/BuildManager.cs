@@ -16,7 +16,7 @@ public class BuildManager : MonoBehaviour {
     public GameObject cancelArea;                                       //The area in which the player can drop a building if he does not want to place it anyway
     private bool _firstBuildingButton = true;                           //Should we show the hint when button is created
     public static bool firstBuildingToBePlaced = true;                 //Should we show a hint when the first building is created ("There are more bills")
-    public static bool lastBuildingToBePlaced = false;                 //Should we show a hint when the last building is created ("Youre done!")
+    public static bool billsDone = false;
 
     public delegate void D_LastBuilding();
     public static event D_LastBuilding LastBuildingPlaced;
@@ -26,7 +26,7 @@ public class BuildManager : MonoBehaviour {
     {
         instance = this;
         BetalingsServiceData.newBill += CreateBuilding;
-        Bill.LastBill += SetLastBuildingToBePlaced;
+        Bill.LastBill += BillsDone;
     }
 
 
@@ -37,11 +37,19 @@ public class BuildManager : MonoBehaviour {
     }
 
 
-    void SetLastBuildingToBePlaced()
+    void BillsDone()
     {
-        lastBuildingToBePlaced = true;
+        billsDone = true;
+
     }
 
+    public void BuildingHasBeenPlaced()
+    {
+        if(billsDone && availableBuildings.Count == 0)
+        {
+            AnnounceLastBuilding();
+        }
+    }
 
 
     public void AnnounceLastBuilding()
@@ -139,6 +147,7 @@ public class BuildManager : MonoBehaviour {
     //This function is called when a building has been successfully placed, thereby finally destroying the (currently disabled) button
     public void RemoveActiveBuildButton()
     {
+        availableBuildings.Remove(activeBuildButton.GetComponent<Button>());
         Destroy(activeBuildButton);
         activeBuildButton = null;
         cancelArea.SetActive(false);

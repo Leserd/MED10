@@ -9,14 +9,18 @@ public class BudgetOverview : MonoBehaviour {
     public Button closeButton;
     public GameObject budgetOverview;
 
+
+
     private void Awake()
     {
         BuildManager.LastBuildingPlaced += ActivateBudgetButton;
+
         if(budgetButton)
             budgetButton.onClick.AddListener(() => ShowOverview());
         if (budgetButton)
             closeButton.onClick.AddListener(() => HideOverview());
     }
+
 
 
     public void ShowOverview()
@@ -26,14 +30,18 @@ public class BudgetOverview : MonoBehaviour {
     }
 
 
+
     public void HideOverview()
     {
         budgetOverview.SetActive(false);
         closeButton.gameObject.SetActive(false);
     }
 
+
+
     private void ActivateBudgetButton()
     {
+        new Hint("Sprites/Hints/LastBuildingPlacedHint", new Vector3(0, 450));
         budgetButton.gameObject.SetActive(true);
     }
 }

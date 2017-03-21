@@ -192,8 +192,8 @@ public class PlayerControls : MonoBehaviour
                         TouchTile(mouseHit.transform.GetComponent<Tile>());
                     }
                 }
-                //else
-                //    print("NOTHING WAS HIT!");
+                else
+                    ClearTileSelection();
             }
         }
         else
@@ -343,8 +343,11 @@ public class PlayerControls : MonoBehaviour
 
     public void ClearTileSelection()
     {
-        selectedTile.ToggleHighlight(false);
-        selectedTile = null;
+        if (selectedTile != null)
+        {
+            selectedTile.ToggleHighlight(false);
+            selectedTile = null;
+        }
     }
 
 
