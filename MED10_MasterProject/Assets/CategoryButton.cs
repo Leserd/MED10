@@ -6,12 +6,9 @@ using UnityEngine.UI;
 
 public class CategoryButton : MonoBehaviour {
     Button _button;
-    public delegate void Categorys(CategoryName name);
+    public delegate void Categorys(string name, string subName);
     public static event Categorys CategoryPress;
     
-
-
-
 	// Use this for initialization
 	void Awake () {
         _button = GetComponent<Button>();
@@ -21,13 +18,9 @@ public class CategoryButton : MonoBehaviour {
 
     void SendUpdate()
     {
-
-        var temp = new CategoryName();
-        temp.Category = GetCategoryName();
-        temp.SubCategory = GetSubCategoryName();
         if (CategoryPress != null)
         {
-            CategoryPress(temp);
+            CategoryPress(GetCategoryName(), GetSubCategoryName());
 
         }
         transform.parent.gameObject.SetActive(false);
@@ -41,9 +34,5 @@ public class CategoryButton : MonoBehaviour {
     {
         return GetComponentInChildren<Text>().text;
     }
-    public class CategoryName
-    {
-        public string Category;
-        public string SubCategory;
-    }
+
 }

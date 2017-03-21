@@ -6,11 +6,30 @@ using UnityEngine.UI;
 public class OpenCategories : MonoBehaviour {
     public GameObject[] Categories;
 
+
 	// Use this for initialization
 	void Awake () {
-        GetComponentInChildren<Button>().onClick.AddListener(() =>OpenCategory());
-        CategoryButton.CategoryPress += DestroyAll;
+        GetComponent<Button>().onClick.AddListener(() =>OpenCategory2());
+        CategoryButton.CategoryPress += CloseAll;
+
 	}
+    void CloseAll(string name, string subName)
+    {
+        GetComponentInChildren<Text>().text = subName;
+        foreach (var Object in Categories)
+        {
+            Object.SetActive(false);
+        }
+    }
+    public void SetActive(int num)
+    {
+        Categories[num].SetActive(true);
+    }
+    void OpenCategory2()
+    {
+
+        Categories[0].SetActive(true);
+    }
 
     void OpenCategory()
     {
@@ -33,12 +52,6 @@ public class OpenCategories : MonoBehaviour {
         }
 
     }
-    void DestroyAll(CategoryButton.CategoryName meh)
-    {
-        foreach (var Cat in Categories)
-        {
-            Destroy(Cat);
-        }
-    }
+
 
 }

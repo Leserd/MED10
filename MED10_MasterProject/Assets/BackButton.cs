@@ -7,10 +7,10 @@ public class BackButton : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-       // GetComponent<Button>().onClick.AddListener(() => transform.parent.gameObject.SetActive(false));
+        GetComponent<Button>().onClick.AddListener(() => transform.parent.gameObject.SetActive(false));
 
         // alternativ
-        GetComponent<Button>().onClick.AddListener(() => Destroy(transform.parent.gameObject));
+       // GetComponent<Button>().onClick.AddListener(() => Destroy(transform.parent.gameObject));
 
 
     }

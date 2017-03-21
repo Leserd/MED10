@@ -11,8 +11,8 @@ public class Bill : MonoBehaviour {
 
     public Text BillName;
     public InputField BillAmount;
-    public Dropdown Category;
-    public Dropdown SubCategory;
+   // public Dropdown Category;
+   // public Dropdown SubCategory;
     public ToggleGroup Frequency;
     public Button Finished;
 
@@ -48,10 +48,10 @@ public class Bill : MonoBehaviour {
     }*/
 
     
-    private void CategoryChosen(CategoryButton.CategoryName categoryNames)
+    private void CategoryChosen(string category, string subCatogry)
     {
-        _categoryName = categoryNames.Category;
-        _subCategoryName = categoryNames.SubCategory;
+        _categoryName = category;
+        _subCategoryName = subCatogry;
         _choseCategory = true;
         FinishedBill();
     }
@@ -76,7 +76,7 @@ public class Bill : MonoBehaviour {
 
     private void AddToBPS()
     {
-        BPS.AddToCurrentExpenses(BillName.text, float.Parse(BillAmount.text), int.Parse(_toggleNumber), Category.captionText.text, SubCategory.captionText.text);
+        BPS.AddToCurrentExpenses(BillName.text, float.Parse(BillAmount.text), int.Parse(_toggleNumber),_categoryName,_subCategoryName);
         gameObject.SetActive(false);
 
 
