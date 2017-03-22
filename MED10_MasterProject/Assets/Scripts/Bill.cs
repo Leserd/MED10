@@ -4,23 +4,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Bill : MonoBehaviour {
+public class Bill : MonoBehaviour
+{
 
     public delegate void D_Bill();
     public static event D_Bill LastBill;
     public static event D_Bill BillFinished;
-    
+
 
     public Text BillName;
     public InputField BillAmount;
-   // public Dropdown Category;
-   // public Dropdown SubCategory;
+    // public Dropdown Category;
+    // public Dropdown SubCategory;
     public ToggleGroup Frequency;
     public Button Finished;
 
-    private bool _isActive, _choseCategory,_choseSubCategory, _choseFrequency;
+    private bool _isActive, _choseCategory, _choseSubCategory, _choseFrequency;
     private BetalingsServiceData BPS;
-    private string _toggleNumber, _categoryName,_subCategoryName;
+    private string _toggleNumber, _categoryName, _subCategoryName;
     public List<Toggle> Toggles;
     public Text CategoryText;
     public int IDnum = -1;
@@ -47,7 +48,7 @@ public class Bill : MonoBehaviour {
     }
 
 
-    
+
     private void CategoryChosen(string category, string subCatogry)
     {
         _categoryName = category;
@@ -64,7 +65,7 @@ public class Bill : MonoBehaviour {
             FinishedBill();
             _toggleNumber = changedToggle.name;
         }
-        if (!Frequency.AnyTogglesOn() )
+        if (!Frequency.AnyTogglesOn())
         {
             _choseFrequency = false;
             FinishedBill();
@@ -76,39 +77,41 @@ public class Bill : MonoBehaviour {
 
     private void AddToBPS()
     {
+        Debug.Log(IDnum);
         if (IDnum > 0)
         {
             BPS.CorrectExpenses(IDnum, BillName.text, float.Parse(BillAmount.text), int.Parse(_toggleNumber), _categoryName, _subCategoryName);
         }
         else
         {
-            BPS.AddToCurrentExpenses(BillName.text, float.Parse(BillAmount.text), int.Parse(_toggleNumber),_categoryName,_subCategoryName);
+            BPS.AddToCurrentExpenses(BillName.text, float.Parse(BillAmount.text), int.Parse(_toggleNumber), _categoryName, _subCategoryName);
+            var bills = GameObject.FindGameObjectsWithTag("Bill");
+            if (bills.Length > 1)
+            {
+                foreach (var bill in bills)
+                {
+                    if (bill.name == BillName.text)
+                    {
+                        Destroy(bill);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                Destroy(bills[0]);
+                if (LastBill != null)
+                {
+                    LastBill();
+
+                }
+                ActivateGameobject.Instance.BillsFinished(false);
+            }
         }
         gameObject.SetActive(false);
 
 
-        var bills = GameObject.FindGameObjectsWithTag("Bill");
-        if (bills.Length > 1)
-        {
-            foreach (var bill in bills)
-            {
-                if (bill.name == BillName.text)
-                {
-                    Destroy(bill);
-                    break;
-                }
-            }
-        }
-        else
-        {
-            Destroy(bills[0]);
-            if (LastBill != null)
-            {
-                LastBill();
 
-            }
-            ActivateGameobject.Instance.BillsFinished(false); 
-        }
         if (BillFinished != null)
         {
             BillFinished();

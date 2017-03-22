@@ -62,6 +62,8 @@ public class LoadBill : MonoBehaviour {
         bill.BillAmount.text = billInfo.Expense.ToString();
         bill.Toggles[SetActiveToggle(billInfo.PaymentsPerYear)].isOn = true;
         bill.CategoryText.text = billInfo.SubCategory;
+        bill.EditBill(billInfo.Category, billInfo.SubCategory);
+        bill.IDnum = ID;
 
 
 

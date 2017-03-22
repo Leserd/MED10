@@ -16,7 +16,6 @@ public class AddMoneyToBar : MonoBehaviour {
 
     private void Awake()
     {
-
         BetalingsServiceData.newBill += AddBill;
         BetalingsServiceData.changedBill += ChangeBill;
     }
@@ -44,7 +43,13 @@ public class AddMoneyToBar : MonoBehaviour {
     }
     private void ChangeBill(BetalingsServiceData.BSData changedData)
     {
+        _totalMoneyAdded +=changedData.MonthlyExpence -  _currentAddedBill[changedData.ID].MonthlyExpence;
         _currentAddedBill[changedData.ID] = changedData;
+        var bar = _addedBills[changedData.ID];
+        var percentage = bar.GetComponent<PercentageBar>();
+        percentage.BillAmount = changedData.MonthlyExpence;
+        _addedBills[changedData.ID] = bar;
+
         ResizePercentageBar();
     }
 

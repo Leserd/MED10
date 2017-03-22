@@ -22,7 +22,6 @@ public class OpenCategories : MonoBehaviour {
             {
                 if (Object.activeSelf)
                 {
-                    Debug.Log("This was active " + Object.name);
                     Object.SetActive(false);
                 }
             }
