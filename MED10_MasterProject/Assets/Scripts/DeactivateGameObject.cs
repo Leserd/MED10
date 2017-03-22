@@ -10,6 +10,10 @@ public class DeactivateGameObject : MonoBehaviour {
     private void Awake()
     {
         GetComponent<Button>().onClick.AddListener(() => ActivateObject.SetActive(false));
-
+        Bill.BillFinished += FinishedBill;
+    }
+    void FinishedBill()
+    {
+        ActivateObject.SetActive(false);
     }
 }

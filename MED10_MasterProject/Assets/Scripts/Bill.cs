@@ -6,8 +6,9 @@ using UnityEngine.UI;
 
 public class Bill : MonoBehaviour {
 
-    public delegate void D_LastBill();
-    public static event D_LastBill LastBill;
+    public delegate void D_Bill();
+    public static event D_Bill LastBill;
+    public static event D_Bill BillFinished;
 
     public Text BillName;
     public InputField BillAmount;
@@ -103,8 +104,11 @@ public class Bill : MonoBehaviour {
             //ActivateGameobject.Instance.GetComponent<Image>().sprite = 
             ActivateGameobject.Instance.BillsFinished(false); 
         }
-
-        transform.parent.gameObject.SetActive(false);
+        if (BillFinished != null)
+        {
+            BillFinished();
+        }
+        //transform.parent.gameObject.SetActive(false);
 
         Destroy(this);
         Debug.Log(BPS.GetPaymentservices(0).Info());
