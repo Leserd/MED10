@@ -9,7 +9,14 @@ public class LoadBill : MonoBehaviour {
     public GameObject ParentTransform;
     public GameObject Bill;
 
-
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            Debug.Log("Pressed Space");
+            EditBill(1);
+        }
+    }
 
     // Use this for initialization
     void Awake () {
@@ -43,6 +50,41 @@ public class LoadBill : MonoBehaviour {
 
 
         //Look at the bill!!
+    }
+    void EditBill(int ID)
+    {
+        var BSinstance = BetalingsServiceData.Instance;
+        var billInfo = BSinstance.GetPaymentservices(ID);
+
+        var billStart = Instantiate(Bill, Vector3.zero, Bill.transform.rotation);
+        billStart.name = billInfo.TransactionName;
+        billStart.transform.SetParent(transform, false);
+
+        var bill = billStart.GetComponent<Bill>();
+        bill.BillName.text = billInfo.TransactionName;
+        bill.BillAmount.text = billInfo.Expense.ToString();
+        bill.Toggles[SetActiveToggle(billInfo.PaymentsPerYear)].isOn = true;
+        bill.CategoryText.text = billInfo.SubCategory;
+
+
+
+    }
+
+    int SetActiveToggle(int num)
+    {
+        switch (num)
+        {
+            case 12:
+                return 0;
+            case 4:
+                return 1;
+            case 2:
+                return 2;
+            case 1:
+                return 3;
+            default:
+                return num ;
+        }
     }
 	
 

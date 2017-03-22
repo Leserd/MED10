@@ -55,13 +55,13 @@ public class BetalingsServiceData : MonoBehaviour {
 
     public struct BSData
     {
-        string TransactionName;
+        public string TransactionName;
         public int ID;
-        float Expense;
-        int PaymentsPerYear;
+        public float Expense;
+        public int PaymentsPerYear;
         public float MonthlyExpence;// { get {return monthlyExpence } set { monthlyExpence = Expense / PaymentsPerYear; } }
         string StartingMonth;
-        string Category;
+        public string Category;
         public string SubCategory;
 
 

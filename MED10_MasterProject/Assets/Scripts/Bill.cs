@@ -9,6 +9,7 @@ public class Bill : MonoBehaviour {
     public delegate void D_Bill();
     public static event D_Bill LastBill;
     public static event D_Bill BillFinished;
+    
 
     public Text BillName;
     public InputField BillAmount;
@@ -21,6 +22,8 @@ public class Bill : MonoBehaviour {
     private BetalingsServiceData BPS;
     private string _toggleNumber, _categoryName,_subCategoryName;
     public List<Toggle> Toggles;
+    public Text CategoryText;
+    public int IDnum = -1;
 
 
     private void Awake()
@@ -37,16 +40,12 @@ public class Bill : MonoBehaviour {
         }
     }
 
-/*private void SubCategoryChosen()
+    public void EditBill(string category, string subCategory)
     {
-        if (SubCategory.value != 0)
-        {
-            _choseSubCategory = true;
-            FinishedBill();
-            return;
-        }
-        _choseSubCategory = false;
-    }*/
+        CategoryChosen(category, subCategory);
+
+    }
+
 
     
     private void CategoryChosen(string category, string subCatogry)
@@ -77,7 +76,14 @@ public class Bill : MonoBehaviour {
 
     private void AddToBPS()
     {
-        BPS.AddToCurrentExpenses(BillName.text, float.Parse(BillAmount.text), int.Parse(_toggleNumber),_categoryName,_subCategoryName);
+        if (IDnum > 0)
+        {
+            BPS.CorrectExpenses(IDnum, BillName.text, float.Parse(BillAmount.text), int.Parse(_toggleNumber), _categoryName, _subCategoryName);
+        }
+        else
+        {
+            BPS.AddToCurrentExpenses(BillName.text, float.Parse(BillAmount.text), int.Parse(_toggleNumber),_categoryName,_subCategoryName);
+        }
         gameObject.SetActive(false);
 
 
@@ -101,14 +107,12 @@ public class Bill : MonoBehaviour {
                 LastBill();
 
             }
-            //ActivateGameobject.Instance.GetComponent<Image>().sprite = 
             ActivateGameobject.Instance.BillsFinished(false); 
         }
         if (BillFinished != null)
         {
             BillFinished();
         }
-        //transform.parent.gameObject.SetActive(false);
 
         Destroy(this);
         Debug.Log(BPS.GetPaymentservices(0).Info());
