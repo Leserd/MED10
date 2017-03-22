@@ -31,9 +31,6 @@ public class LoadBill : MonoBehaviour {
             bill.AddComponent<Button>().onClick.AddListener(() => LookAtBill(Name));
             
         }
-
-
-        //gameObject.SetActive(false);
     }
 
 

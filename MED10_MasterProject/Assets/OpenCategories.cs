@@ -5,14 +5,13 @@ using UnityEngine.UI;
 
 public class OpenCategories : MonoBehaviour {
     public GameObject[] Categories;
-    private Text _categoryText;
+    public Text CategoryText;
 
 
 	// Use this for initialization
 	void Awake () {
         GetComponent<Button>().onClick.AddListener(() =>OpenCategory2());
         CategoryButton.CategoryPress += CloseAll;
-        _categoryText = GetComponentInChildren<Text>();
 
 	}
     void CloseAll(string name, string subName)
@@ -29,7 +28,11 @@ public class OpenCategories : MonoBehaviour {
             }
 
         }
-        _categoryText.text = subName;
+        if (CategoryText != null)
+        {
+        CategoryText.text = subName;
+
+        }
 
     }
     public void SetActive(int num)

@@ -7,6 +7,6 @@ public class RegretPressingBill : MonoBehaviour {
 
     private void Awake()
     {
-        gameObject.AddComponent<Button>().onClick.AddListener(() => transform.parent.gameObject.SetActive(false));//Destroy(transform.parent.gameObject));
+        gameObject.AddComponent<Button>().onClick.AddListener(() => Destroy(transform.parent.gameObject));
     }
 }
