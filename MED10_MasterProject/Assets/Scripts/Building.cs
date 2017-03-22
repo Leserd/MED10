@@ -5,14 +5,16 @@ using UnityEngine;
 public class Building : MonoBehaviour {
 
     public int buildingSize;
+    public int ID;      //ID of the bill this building represents
     public float buildTime;
     public E_BuildingStatus status;
     public bool possibleToBuild = false;
+    private bool selected = false;
     private SpriteRenderer sprite;
     private Color colorDefault = Color.white;
     private Color colorPossible = new Color(0, 1, 0, 0.5f);
     private Color colorImpossible = new Color(1, 0, 0, 0.5f);
-    private Color halfTransparent = new Color(1, 1, 1, 0.4f);
+    private Color halfTransparent = new Color(1, 1, 1, 0.5f);
     private Color fullTransparent = new Color(1, 1, 1, 0.0f);
     private List<Tile> touchingTiles;
     private Tile hoveredTile;
@@ -25,6 +27,11 @@ public class Building : MonoBehaviour {
         sprite.sortingOrder = 10;   //Sorting order will be changed when the building is placed on a tile
         sprite.color = halfTransparent;
         touchingTiles = new List<Tile>();
+
+        BuildManager.StartIgnoreRaycast += StartIgnoreRaycast;
+        BuildManager.StopIgnoreRaycast += StopIgnoringRaycast;
+
+        PlayerControls.SelectObject += Select;
     }
 
 
@@ -84,6 +91,31 @@ public class Building : MonoBehaviour {
         }
 
         sprite.sortingOrder = CalculateSortingOrder();
+    }
+
+
+
+    public void Select(GameObject obj)
+    {
+        if((obj == null ||obj != gameObject) && selected)
+        {
+            Deselect();
+        }
+        else if (obj == gameObject && !selected)
+        {
+            //Debug.Log("Selected " + gameObject.name);
+            selected = true;
+            foreach(Tile tile in touchingTiles)
+            {
+                tile.Select(tile.gameObject);
+            }
+        }
+    }
+
+    public void Deselect()
+    {
+        //Debug.Log("Deselected " + gameObject.name);
+        selected = false;
     }
 
 
@@ -304,12 +336,36 @@ public class Building : MonoBehaviour {
                 BuildManager.firstBuildingToBePlaced = false;
             }
 
-            BuildManager.instance.BuildingHasBeenPlaced();
+            BuildManager.instance.BuildingHasBeenPlaced(ID);
         }
         else
         {
             BuildManager.instance.CancelBuild();
         }
+    }
+
+
+
+
+    private void StartIgnoreRaycast()
+    {
+        //Set layer to IgnoreRaycast
+        gameObject.layer = 2;
+
+        //Make building transparent so the tiles behind can be seen
+        sprite.color = halfTransparent;
+    }
+
+
+
+
+    private void StopIgnoringRaycast()
+    {
+        //Set layer to default
+        gameObject.layer = 0;
+
+        //Make building opaque again
+        sprite.color = colorDefault;
     }
 }
 

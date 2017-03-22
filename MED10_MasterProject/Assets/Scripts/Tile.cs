@@ -15,6 +15,7 @@ public class Tile : MonoBehaviour {
     private Color colorFull = Color.red;
     private Color colorDefault = Color.white;
     private Color colorStatus;
+    private bool selected = false;
     public int x, y;
 
     
@@ -29,13 +30,65 @@ public class Tile : MonoBehaviour {
         TileManager.ToggleTileStatus += ToggleHighlight;
         TileManager.ToggleFullTileStatus += ToggleHighlightFull;
 
-
+        PlayerControls.SelectObject += Select;
     }
+
+
 
     private void Start()
     {
         TileManager.instance.SetTileListCoords(this, x, y);
     }
+
+
+
+    //Called when user selects this tile
+    public void Select(GameObject obj)
+    {
+        ////Deselect if object is null or if obj != go while ob
+        //if ((obj == null ||
+        //    (obj != gameObject && obj.GetComponent<Building>() != null && obj.GetComponent<Building>() != attachedBuilding))
+        //    && selected)
+        //{
+        //    Deselect();
+        //}
+        //else if ((obj == gameObject || (obj.GetComponent<Building>() != null && obj.GetComponent<Building>() == attachedBuilding)) && !selected)
+        //{
+        //    //Highlight
+        //    ToggleHighlight(true);
+        //    selected = true;
+        //    //Debug.Log("Selected " + gameObject.name);
+        //    //if building placed, select building instead?
+        //    if (attachedBuilding)
+        //        attachedBuilding.Select(attachedBuilding.gameObject);
+        //}
+
+        if ((obj == null || obj != gameObject) && selected)
+        {
+            Deselect();
+        }
+        else if (obj == gameObject && !selected)
+        {
+            //Debug.Log("Selected " + gameObject.name);
+            selected = true;
+            //Highlight
+            ToggleHighlight(true);
+            if (attachedBuilding)
+                attachedBuilding.Select(attachedBuilding.gameObject);
+        }
+    }
+
+
+    //Called when user select another tile or clears tile selection
+    public void Deselect()
+    {
+        //Dehighlight
+        ToggleHighlight(false);
+        selected = false;
+        //Debug.Log("Deselected " + gameObject.name);
+
+    }
+
 
 
     public void ChangeTileStatus(E_TileStatus status)
@@ -49,12 +102,11 @@ public class Tile : MonoBehaviour {
             case E_TileStatus.FULL:
                 colorStatus = colorFull;
                 TileStatus = E_TileStatus.FULL;
-                //TileManager.ToggleTileStatus += ToggleHighlight;
                 break;
         }
     }
 
-    //TODO: gør så tiles kan toggles hvis de ikke er full (tiles forbliver grønne efter fejlet bygning)
+
 
     public void ToggleHighlight()
     {

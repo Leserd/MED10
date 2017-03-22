@@ -8,13 +8,18 @@ public class PlayerControls : MonoBehaviour
 {
 
     public static PlayerControls instance;
-    private Tile selectedTile;
     public static Tile hoveredTile { get; set; }       //Tile that the player is currently touching while dragging finger/mouse on screen
 
 
     //****Event variables
     public delegate void D_ChangeTouchStatus(E_TouchStatus status);
     public static event D_ChangeTouchStatus TouchStatusChange;
+
+    public delegate void D_SelectObject(GameObject obj);
+    public static event D_SelectObject SelectObject;
+
+    public delegate void D_ClearSelection();
+    public static event D_ClearSelection ClearSelection;
 
     //****Touch variables
     public E_TouchStatus TouchStatus { get; set; }
@@ -53,13 +58,13 @@ public class PlayerControls : MonoBehaviour
 
     private void DetectTouch()
     {
-
-        //if (!EventSystem.current.IsPointerOverGameObject() && !IsPointerOverUIObject())
-
+        //only call touch functions if pointer is not over a UI object
         if (!IsPointerOverUIObject())
         {
+            //If app, look for touch inputs
             if (GameManager.IsApp)
             {
+                //Only call these functions if two or less touch inputs at the same time
                 if (Input.touchCount <= 2)
                 {
                     for (int i = 0; i < Input.touchCount; i++)
@@ -79,6 +84,7 @@ public class PlayerControls : MonoBehaviour
                     }
                 }
             }
+            //if editor, look for mouse input
             else
             {
                 if (Input.GetMouseButtonDown(0))
@@ -96,6 +102,7 @@ public class PlayerControls : MonoBehaviour
                 }
             }
         }
+        //If pointer is above UI object, reset stored pointer position so it does not create errors next time user touches screen
         else
         {
             Vector2 pos = Vector2.zero;
@@ -121,11 +128,12 @@ public class PlayerControls : MonoBehaviour
     }
 
 
+    //User touches screen with finger/mouse 
     private void TouchBegin()
     {
-        //print("Begin");
         if (GameManager.IsApp)
         {
+            //store position of all touch inputs
             for (int i = 0; i < Input.touchCount; i++)
             {
                 touchPosBegin[i] = Input.GetTouch(i).position;
@@ -135,16 +143,18 @@ public class PlayerControls : MonoBehaviour
         }
         else
         {
+            //store position of mouse input
             touchPosBegin[0] = Input.mousePosition;
             touchPosCurrent[0] = Input.mousePosition;
             touchPosLast[0] = touchPosBegin[0];
         }
 
-
+        //Touch input just began, so we are not (yet) swiping
         swiping = false;
     }
 
 
+    //User moves mouse/finger on screen. Figure out if user is trying to drag camera or zoom 
     private void TouchSwipe()
     {
         if (GameManager.IsApp)
@@ -174,37 +184,47 @@ public class PlayerControls : MonoBehaviour
     }
 
 
-
+    //User lifts finger/mouse
     private void TouchEnd()
     {
-        //print("End");
         hoveredTile = null;
-        if(TouchStatus == E_TouchStatus.IDLE)
+
+        //Raycast at current touch position
+        Ray mouseRay = cam.ScreenPointToRay(touchPosCurrent[0]);
+        RaycastHit2D mouseHit = Physics2D.GetRayIntersection(mouseRay);
+
+        if (TouchStatus == E_TouchStatus.IDLE)
         {
+            //If it is a click and not released after dragging
             if (Vector2.Distance(touchPosBegin[0], touchPosCurrent[0]) < TOUCH_MOVE_DIST_THRESHOLD && swiping != true)
             {
-                Ray mouseRay = cam.ScreenPointToRay(touchPosCurrent[0]);
-                RaycastHit2D mouseHit = Physics2D.GetRayIntersection(mouseRay);
                 if (mouseHit.collider != null)
                 {
-                    if (mouseHit.transform.tag == "Tile")
-                    {
-                        TouchTile(mouseHit.transform.GetComponent<Tile>());
-                    }
+                    TouchObject(mouseHit.transform.gameObject);
+                    //if (mouseHit.transform.tag == "Tile")
+                    //{
+                    //    TouchTile(mouseHit.transform.GetComponent<Tile>());
+                    //}
+
+                    //else if (mouseHit.transform.tag == "Building")
+                    //{
+                    //    TouchBuilding(mouseHit.transform.GetComponent<Building>());
+                    //}
                 }
                 else
+                {
                     ClearTileSelection();
+                }
             }
         }
-        else
+        else //if user is about to build
         {
-            Ray mouseRay = cam.ScreenPointToRay(touchPosCurrent[0]);
-            RaycastHit2D mouseHit = Physics2D.GetRayIntersection(mouseRay);
             if (mouseHit.collider != null)
             {
                 if (mouseHit.transform.tag == "Tile")
                 {
-                    TouchTile(mouseHit.transform.GetComponent<Tile>());
+                    //TouchTile(mouseHit.transform.GetComponent<Tile>());
+                    TouchObject(mouseHit.transform.gameObject);
                 }
                 else
                 {
@@ -213,16 +233,16 @@ public class PlayerControls : MonoBehaviour
             }
             else
             {
-                print("NOTHING WAS HIT!");
                 BuildManager.instance.CancelBuild();
             }
         }
-        
     }
 
 
+    //User is attempting to drag camera
     private void TouchDrag()
     {
+        //Find the tile currently hovered over
         Ray mouseRay = cam.ScreenPointToRay(touchPosCurrent[0]);
         RaycastHit2D mouseHit = Physics2D.GetRayIntersection(mouseRay);
         if (mouseHit.collider != null)
@@ -237,13 +257,12 @@ public class PlayerControls : MonoBehaviour
             hoveredTile = null;
         }
 
-
+        //Move camera (only if touchStatus idle)
         if (TouchStatus == E_TouchStatus.IDLE)
         {
+            //Only attempt to drag camera if user has moved touch a little bit
             if (Vector2.Distance(touchPosBegin[0], touchPosCurrent[0]) > TOUCH_MOVE_DIST_THRESHOLD)
             {
-                //print("Moving");
-
                 if (swiping == true)
                 {
                     Vector3 lastTouch = cam.ScreenToWorldPoint(touchPosLast[0]);
@@ -276,6 +295,7 @@ public class PlayerControls : MonoBehaviour
 
                     cam.transform.position = Vector3.Lerp(cam.transform.position, cam.transform.position + dist, Time.deltaTime * CAM_DRAG_SPEED);
                 }
+
                 swiping = true;
                 touchPosLast[0] = touchPosCurrent[0];
             }
@@ -313,17 +333,36 @@ public class PlayerControls : MonoBehaviour
     }
 
 
+
+    public void TouchObject(GameObject obj)
+    {
+        switch (TouchStatus)
+        {
+            case E_TouchStatus.IDLE:
+                SelectObject(obj);      //if it is null (raycast hit nothing), then everything will be deselected.
+                break;
+            case E_TouchStatus.BUILD:
+                if (obj.GetComponent<Tile>() && obj.GetComponent<Tile>().TileStatus == E_TileStatus.EMPTY)
+                {
+                    BuildManager.buildingToBuild.GetComponent<Building>().BuildOnTile();
+
+                    ChangeTouchStatus(E_TouchStatus.IDLE);
+                }
+                else
+                {
+                    BuildManager.instance.CancelBuild();
+                }
+                break;
+        }
+    }
+
     public void TouchTile(Tile tile)
     {
         switch (TouchStatus)
         {
             case E_TouchStatus.IDLE:
-                if (selectedTile != null && selectedTile != tile)
-                {
-                    selectedTile.ToggleHighlight(false);
-                }
-                selectedTile = tile;
-                selectedTile.ToggleHighlight(true);
+                if(SelectObject != null)
+                    SelectObject(tile.gameObject);
                 break;
             case E_TouchStatus.BUILD:
                 if (tile.TileStatus == E_TileStatus.EMPTY)
@@ -341,12 +380,25 @@ public class PlayerControls : MonoBehaviour
     }
 
 
+    public void TouchBuilding(Building building)
+    {
+        switch (TouchStatus)
+        {
+            case E_TouchStatus.IDLE:
+                
+                break;
+            case E_TouchStatus.BUILD:
+                
+                break;
+        }
+    }
+
+
     public void ClearTileSelection()
     {
-        if (selectedTile != null)
+        if(SelectObject != null)
         {
-            selectedTile.ToggleHighlight(false);
-            selectedTile = null;
+            SelectObject(null);
         }
     }
 
