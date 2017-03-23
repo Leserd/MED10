@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class OpenCategories : MonoBehaviour {
     public GameObject[] Categories;
+    public Text CategoryText;
 
 
 	// Use this for initialization
@@ -15,11 +16,23 @@ public class OpenCategories : MonoBehaviour {
 	}
     void CloseAll(string name, string subName)
     {
-        GetComponentInChildren<Text>().text = subName;
         foreach (var Object in Categories)
         {
-            Object.SetActive(false);
+            if (Object != null)
+            {
+                if (Object.activeSelf)
+                {
+                    Object.SetActive(false);
+                }
+            }
+
         }
+        if (CategoryText != null)
+        {
+        CategoryText.text = subName;
+
+        }
+
     }
     public void SetActive(int num)
     {
@@ -30,28 +43,4 @@ public class OpenCategories : MonoBehaviour {
 
         Categories[0].SetActive(true);
     }
-
-    void OpenCategory()
-    {
-        var categories = Instantiate(Categories[0], transform, false);
-        var catbuttons = categories.GetComponentsInChildren<Button>();
-        int number = 0;
-        foreach (var button in catbuttons)
-        {
-            button.onClick.AddListener(() => SubCategory(number));
-            number++;
-        }
-    }
-    void SubCategory( int num)
-    {
-        if (num != 0)
-        {
-            Debug.Log(num);
-            Instantiate(Categories[num], transform, false);
-
-        }
-
-    }
-
-
 }

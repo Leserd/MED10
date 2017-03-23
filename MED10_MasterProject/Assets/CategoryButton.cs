@@ -23,7 +23,6 @@ public class CategoryButton : MonoBehaviour {
             CategoryPress(GetCategoryName(), GetSubCategoryName());
 
         }
-        transform.parent.gameObject.SetActive(false);
     }
 
     string GetCategoryName()
