@@ -11,6 +11,7 @@ public class BuildManager : MonoBehaviour {
     public static GameObject activeBuildButton;                         //Building (button) the player is currently trying to place
     public static Vector3 buildingOffset = new Vector3(-0.03f, 0.4f, 0);    //Offset for buildings so they are correctly shown on tiles
     public List<Button> availableBuildings = new List<Button>();        //List of buttons available on the Build bar
+    public Building[] placedBuildings;
     public GameObject buildingBtnPrefab;                                //Prefab of a building button
     public Transform buildingBtnParent;                                 //The Transform to which all building buttons will be a child
     public GameObject cancelArea;                                       //The area in which the player can drop a building if he does not want to place it anyway
@@ -33,6 +34,10 @@ public class BuildManager : MonoBehaviour {
         instance = this;
         BetalingsServiceData.newBill += CreateBuilding;
         Bill.LastBill += BillsDone;
+        BetalingsServiceData.changedBill += ChangeBuilding;
+        placedBuildings = new Building[PretendData.instance.LasseTestData.Length];
+        //for(int i = 0; i < PretendData.instance.LasseTestData.Length; )
+        //Debug.Log(PretendData.instance.LasseTestData.Length);
     }
 
 
@@ -49,7 +54,7 @@ public class BuildManager : MonoBehaviour {
 
     }
 
-    public void BuildingHasBeenPlaced(int id)
+    public void BuildingHasBeenPlaced(Building building, int id)
     {
         //Make all buildings opaque and raycastable
         if (StopIgnoreRaycast != null)
@@ -62,10 +67,23 @@ public class BuildManager : MonoBehaviour {
             NewBuildingPlaced(id);
         }
 
+        //Add building to building list
+        
+        placedBuildings[id] = building;
+
         if (billsDone && availableBuildings.Count == 0)
         {
             AnnounceLastBuilding();
         }
+    }
+
+
+    public void ChangeBuilding(BetalingsServiceData.BSData bsData)
+    {
+        Building building = placedBuildings[bsData.ID];
+        building.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Buildings/" + bsData.SubCategory);
+        building.transform.name = bsData.SubCategory;
+        //TODO: Change event script on building
     }
 
 

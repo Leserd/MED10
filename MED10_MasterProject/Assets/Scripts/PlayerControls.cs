@@ -201,15 +201,6 @@ public class PlayerControls : MonoBehaviour
                 if (mouseHit.collider != null)
                 {
                     TouchObject(mouseHit.transform.gameObject);
-                    //if (mouseHit.transform.tag == "Tile")
-                    //{
-                    //    TouchTile(mouseHit.transform.GetComponent<Tile>());
-                    //}
-
-                    //else if (mouseHit.transform.tag == "Building")
-                    //{
-                    //    TouchBuilding(mouseHit.transform.GetComponent<Building>());
-                    //}
                 }
                 else
                 {
@@ -223,7 +214,6 @@ public class PlayerControls : MonoBehaviour
             {
                 if (mouseHit.transform.tag == "Tile")
                 {
-                    //TouchTile(mouseHit.transform.GetComponent<Tile>());
                     TouchObject(mouseHit.transform.gameObject);
                 }
                 else
@@ -356,6 +346,8 @@ public class PlayerControls : MonoBehaviour
         }
     }
 
+
+    //NO LONGER USED! Saved for now, just in case
     public void TouchTile(Tile tile)
     {
         switch (TouchStatus)
@@ -379,19 +371,6 @@ public class PlayerControls : MonoBehaviour
         }
     }
 
-
-    public void TouchBuilding(Building building)
-    {
-        switch (TouchStatus)
-        {
-            case E_TouchStatus.IDLE:
-                
-                break;
-            case E_TouchStatus.BUILD:
-                
-                break;
-        }
-    }
 
 
     public void ClearTileSelection()

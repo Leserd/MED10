@@ -14,10 +14,14 @@ public class Building : MonoBehaviour {
     private Color colorDefault = Color.white;
     private Color colorPossible = new Color(0, 1, 0, 0.5f);
     private Color colorImpossible = new Color(1, 0, 0, 0.5f);
+    private Color colorSelected = Color.cyan;
     private Color halfTransparent = new Color(1, 1, 1, 0.5f);
     private Color fullTransparent = new Color(1, 1, 1, 0.0f);
     private List<Tile> touchingTiles;
     private Tile hoveredTile;
+
+    private bool showBuildingStatus;
+
 
 
 
@@ -29,12 +33,17 @@ public class Building : MonoBehaviour {
         touchingTiles = new List<Tile>();
 
         BuildManager.StartIgnoreRaycast += StartIgnoreRaycast;
-        BuildManager.StopIgnoreRaycast += StopIgnoringRaycast;
+        BuildManager.StopIgnoreRaycast += StopIgnoreRaycast;
 
         PlayerControls.SelectObject += Select;
     }
 
-
+    private void OnDestroy()
+    {
+        PlayerControls.SelectObject -= Select;
+        BuildManager.StartIgnoreRaycast -= StartIgnoreRaycast;
+        BuildManager.StopIgnoreRaycast -= StopIgnoreRaycast;
+    }
 
     private void Update()
     {
@@ -97,27 +106,94 @@ public class Building : MonoBehaviour {
 
     public void Select(GameObject obj)
     {
-        if((obj == null ||obj != gameObject) && selected)
+        bool select = true; //Should this object be selected
+
+        if (obj == null)
         {
-            Deselect();
+            select = false;
         }
-        else if (obj == gameObject && !selected)
+        else if(obj != gameObject)
         {
-            //Debug.Log("Selected " + gameObject.name);
-            selected = true;
-            foreach(Tile tile in touchingTiles)
+            if (obj.tag == "Tile")
             {
-                tile.Select(tile.gameObject);
+                if (touchingTiles.Contains(obj.GetComponent<Tile>()))
+                {
+                    select = true;
+                }
+                else
+                {
+                    select = false;
+                }
+            }
+            else
+            {
+                select = false;
             }
         }
+
+        if (select)
+        {
+            if (selected) //was it already selected?
+            {
+                return;
+            }
+            else
+            {
+                //Debug.Log("Selected " + gameObject.name);
+                selected = true;
+                ToggleHighlight(true);
+
+                foreach (Tile tile in touchingTiles)
+                {
+                    tile.Select(tile.gameObject);
+                }
+            }
+        }
+        else
+        {
+            if(selected)    //only deselect if it was currently selected
+                Deselect();
+        }
+
+
+        //if ((obj == null || (obj != gameObject && (obj.tag == "Tile" && !touchingTiles.Contains(obj.GetComponent<Tile>())))) && selected)
+        //{
+        //    Deselect();
+        //}
+        //else if ((obj == gameObject || (obj.tag == "Tile" && touchingTiles.Contains(obj.GetComponent<Tile>()))) && !selected)
+        //{
+        //    Debug.Log("Selected " + gameObject.name);
+        //    selected = true;
+
+        //    foreach (Tile tile in touchingTiles)
+        //    {
+        //        print(tile.gameObject);
+        //        tile.Select(tile.gameObject);
+        //    }
+        //}
     }
+
+
 
     public void Deselect()
     {
         //Debug.Log("Deselected " + gameObject.name);
+        ToggleHighlight(false);
         selected = false;
     }
 
+
+    public void ToggleHighlight(bool show)
+    {
+        showBuildingStatus = show;
+        if (showBuildingStatus)
+            if (selected)
+                sprite.color = colorSelected;
+            else
+                sprite.color = colorDefault;
+        else
+            sprite.color = colorDefault;
+    }
 
 
     private Vector3 CalculatePosition()
@@ -186,8 +262,6 @@ public class Building : MonoBehaviour {
     public IEnumerator Build()
     {
         sprite.color = Color.white;
-
-        GetComponent<EdgeCollider2D>().enabled = false;
 
         float startTime = Time.time;
         float endTime = startTime + buildTime;
@@ -336,7 +410,7 @@ public class Building : MonoBehaviour {
                 BuildManager.firstBuildingToBePlaced = false;
             }
 
-            BuildManager.instance.BuildingHasBeenPlaced(ID);
+            BuildManager.instance.BuildingHasBeenPlaced(this, ID);
         }
         else
         {
@@ -359,7 +433,7 @@ public class Building : MonoBehaviour {
 
 
 
-    private void StopIgnoringRaycast()
+    private void StopIgnoreRaycast()
     {
         //Set layer to default
         gameObject.layer = 0;

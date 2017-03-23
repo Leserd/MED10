@@ -7,13 +7,14 @@ public class Tile : MonoBehaviour {
 
     public E_TileStatus TileStatus;
     private E_TileStatus _tileStatus;
-    private Building attachedBuilding;
+    [SerializeField] private Building attachedBuilding;
     public bool showTileStatus = false;
     private SpriteRenderer sprite;
     private MeshRenderer highlightPlane;
     private Color colorEmpty = Color.green;
     private Color colorFull = Color.red;
     private Color colorDefault = Color.white;
+    private Color colorSelected = Color.cyan;
     private Color colorStatus;
     private bool selected = false;
     public int x, y;
@@ -45,38 +46,70 @@ public class Tile : MonoBehaviour {
     //Called when user selects this tile
     public void Select(GameObject obj)
     {
-        ////Deselect if object is null or if obj != go while ob
-        //if ((obj == null ||
-        //    (obj != gameObject && obj.GetComponent<Building>() != null && obj.GetComponent<Building>() != attachedBuilding))
-        //    && selected)
+        bool select = true; //Should this object be selected
+
+        if (obj == null)
+        {
+            select = false;
+        }   
+        else if(obj != gameObject)
+        {
+            if(obj.tag == "Building")
+            {
+                if (obj.GetComponent<Building>() == attachedBuilding)
+                {
+                    select = true;
+                }
+                else
+                {
+                    select = false;
+                }
+            }
+            else
+            {
+                select = false;
+            }
+        }
+
+        if (select)
+        {
+            if (selected)   //was it already selected?
+            {
+                return;
+            }
+            else
+            {
+                //Debug.Log("Selected " + gameObject.name);
+                selected = true;
+                //Highlight
+                ToggleHighlight(true);
+                if (attachedBuilding)
+                    attachedBuilding.Select(attachedBuilding.gameObject);
+            }
+        }
+        else
+        {
+            if (selected)   //only deselect if it was currently selected
+                Deselect();
+        }
+
+
+
+        //if ((obj == null || (obj != gameObject && (obj.tag == "Building" && attachedBuilding != obj.GetComponent<Building>())))  && selected)
         //{
         //    Deselect();
         //}
-        //else if ((obj == gameObject || (obj.GetComponent<Building>() != null && obj.GetComponent<Building>() == attachedBuilding)) && !selected)
+        //else if ((obj == gameObject || (obj.tag == "Building" && attachedBuilding == obj.GetComponent<Building>())) && !selected)
         //{
+        //    Debug.Log("Selected " + gameObject.name);
+        //    selected = true;
         //    //Highlight
         //    ToggleHighlight(true);
-        //    selected = true;
-        //    //Debug.Log("Selected " + gameObject.name);
-        //    //if building placed, select building instead?
         //    if (attachedBuilding)
         //        attachedBuilding.Select(attachedBuilding.gameObject);
         //}
-
-        if ((obj == null || obj != gameObject) && selected)
-        {
-            Deselect();
-        }
-        else if (obj == gameObject && !selected)
-        {
-            //Debug.Log("Selected " + gameObject.name);
-            selected = true;
-            //Highlight
-            ToggleHighlight(true);
-            if (attachedBuilding)
-                attachedBuilding.Select(attachedBuilding.gameObject);
-        }
     }
+
 
 
     //Called when user select another tile or clears tile selection
@@ -113,7 +146,13 @@ public class Tile : MonoBehaviour {
         showTileStatus = !showTileStatus;
 
         if (showTileStatus)
-            sprite.color = colorStatus;
+        {
+            if (selected)
+                sprite.color = colorSelected;
+            else
+                sprite.color = colorStatus;
+        }
+            
         else
             sprite.color = colorDefault;
     }
@@ -124,7 +163,10 @@ public class Tile : MonoBehaviour {
     {
         showTileStatus = show;
         if (showTileStatus)
-            sprite.color = colorStatus;
+            if (selected)
+                sprite.color = colorSelected;
+            else
+                sprite.color = colorStatus;
         else
             sprite.color = colorDefault;
     }
