@@ -77,8 +77,7 @@ public class Bill : MonoBehaviour
 
     private void AddToBPS()
     {
-        Debug.Log(IDnum);
-        if (IDnum > 0)
+        if (IDnum >= 0)
         {
             BPS.CorrectExpenses(IDnum, BillName.text, float.Parse(BillAmount.text), int.Parse(_toggleNumber), _categoryName, _subCategoryName);
         }
@@ -107,19 +106,13 @@ public class Bill : MonoBehaviour
                 }
                 ActivateGameobject.Instance.BillsFinished(false);
             }
+            if (BillFinished != null)
+            {
+                BillFinished();
+            }
         }
-        gameObject.SetActive(false);
-
-
-
-        if (BillFinished != null)
-        {
-            BillFinished();
-        }
-
-        Destroy(this);
-        Debug.Log(BPS.GetPaymentservices(0).Info());
-
+       // gameObject.SetActive(false);
+        Destroy(gameObject);
     }
 
     void FinishedBill()

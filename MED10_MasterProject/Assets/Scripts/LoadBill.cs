@@ -9,14 +9,6 @@ public class LoadBill : MonoBehaviour {
     public GameObject ParentTransform;
     public GameObject Bill;
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.KeypadEnter))
-        {
-            Debug.Log("Pressed Space");
-            EditBill(1);
-        }
-    }
 
     // Use this for initialization
     void Awake () {
@@ -29,8 +21,8 @@ public class LoadBill : MonoBehaviour {
             bill.GetComponentInChildren<Text>().text = Name.BSDataName;
             bill.SetActive(true);
             bill.AddComponent<Button>().onClick.AddListener(() => LookAtBill(Name));
-            
         }
+        EditBill.Edit += EditBillMethod;
     }
 
 
@@ -48,7 +40,7 @@ public class LoadBill : MonoBehaviour {
 
         //Look at the bill!!
     }
-    void EditBill(int ID)
+    void EditBillMethod(int ID)
     {
         var BSinstance = BetalingsServiceData.Instance;
         var billInfo = BSinstance.GetPaymentservices(ID);
