@@ -7,11 +7,12 @@ public class BuildButton : MonoBehaviour {
 
     private Button btn;
     public GameObject building;
+    public int ID;
 
     private void Start()
     {
         btn = GetComponent<Button>();
-        btn.onClick.AddListener(() => BuildManager.instance.SetBuildingToBuild(building));
+        btn.onClick.AddListener(() => BuildManager.instance.SetBuildingToBuild(building, ID));
        
     }
 

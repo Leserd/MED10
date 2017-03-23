@@ -18,9 +18,15 @@ public class BuildManager : MonoBehaviour {
     public static bool firstBuildingToBePlaced = true;                 //Should we show a hint when the first building is created ("There are more bills")
     public static bool billsDone = false;
 
-    public delegate void D_LastBuilding();
-    public static event D_LastBuilding LastBuildingPlaced;
+    public delegate void D_LastBuildingPlaced();
+    public static event D_LastBuildingPlaced LastBuildingPlaced;
 
+    public delegate void D_NewBuildingPlaced(int id);
+    public static event D_NewBuildingPlaced NewBuildingPlaced;
+
+    public delegate void D_IgnoreRaycast();
+    public static event D_IgnoreRaycast StartIgnoreRaycast;
+    public static event D_IgnoreRaycast StopIgnoreRaycast;
 
     private void Awake()
     {
@@ -33,7 +39,7 @@ public class BuildManager : MonoBehaviour {
 
     void CreateBuilding(BetalingsServiceData.BSData data)
     {
-        AddBuildingButton("Prefabs/Lasse/" + data.SubCategory);
+        AddBuildingButton("Prefabs/Lasse/" + data.SubCategory, data.ID);
     }
 
 
@@ -43,9 +49,20 @@ public class BuildManager : MonoBehaviour {
 
     }
 
-    public void BuildingHasBeenPlaced()
+    public void BuildingHasBeenPlaced(int id)
     {
-        if(billsDone && availableBuildings.Count == 0)
+        //Make all buildings opaque and raycastable
+        if (StopIgnoreRaycast != null)
+        {
+            StopIgnoreRaycast();
+        }
+
+        if(NewBuildingPlaced != null)
+        {
+            NewBuildingPlaced(id);
+        }
+
+        if (billsDone && availableBuildings.Count == 0)
         {
             AnnounceLastBuilding();
         }
@@ -73,26 +90,32 @@ public class BuildManager : MonoBehaviour {
 
     public void TestBuildings()
     {
-        AddBuildingButton("Prefabs/Lasse/Husleje");
-        AddBuildingButton("Prefabs/Lasse/El");
-        AddBuildingButton("Prefabs/Lasse/Husleje");
+        AddBuildingButton("Prefabs/Lasse/Husleje", 0);
+        AddBuildingButton("Prefabs/Lasse/El", 0);
+        AddBuildingButton("Prefabs/Lasse/Husleje", 0);
     }
 
 
-    public void StartPlacingBuilding(GameObject buildingButton)
+    public void StartPlacingBuilding(GameObject buildingButton, int id)
     {
         //Store the button for the building being built:
         SetActiveBuildButton(buildingButton);
 
         //Store the gameobject of the building being built:
-        SetBuildingToBuild(buildingButton.GetComponent<BuildButton>().building);
+        SetBuildingToBuild(buildingButton.GetComponent<BuildButton>().building, id);
 
         PlayerControls.instance.ChangeTouchStatus(E_TouchStatus.BUILD);
+
+        //Make all buildings transparent
+        if(StartIgnoreRaycast != null)
+        {
+            StartIgnoreRaycast();
+        }
     }
 
 
 
-    public void SetBuildingToBuild(GameObject building)
+    public void SetBuildingToBuild(GameObject building, int id)
     {
         Plane plane = new Plane(Vector3.back, Vector3.zero);
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -106,6 +129,7 @@ public class BuildManager : MonoBehaviour {
         }
 
         buildingToBuild = Instantiate(building, spawnPos, Quaternion.identity);
+        buildingToBuild.GetComponent<Building>().ID = id;
     }
 
 
@@ -118,6 +142,13 @@ public class BuildManager : MonoBehaviour {
             buildingToBuild = null;
         }
         PlayerControls.instance.ChangeTouchStatus(E_TouchStatus.IDLE);
+
+        //Make all buildings opaque
+        if (StopIgnoreRaycast != null)
+        {
+            StopIgnoreRaycast();
+        }
+
         //Replace button on the build menu
         ReactivateBuildButton();
     }
@@ -155,7 +186,7 @@ public class BuildManager : MonoBehaviour {
     }
 
 
-    public void AddBuildingButton(string buildingPath)
+    public void AddBuildingButton(string buildingPath, int id)
     {
         GameObject building = Resources.Load<GameObject>(buildingPath);
         if(building == null)
@@ -181,25 +212,13 @@ public class BuildManager : MonoBehaviour {
 
         //Assign referenced building to build
         newBuildingBtn.GetComponent<BuildButton>().building = building;
+        newBuildingBtn.GetComponent<BuildButton>().ID = id;
 
         //Create BeginDrag trigger event
         EventTrigger trigger = newBuildingBtn.GetComponent<EventTrigger>();
         EventTrigger.Entry entry = new EventTrigger.Entry();
         entry.eventID = EventTriggerType.BeginDrag;
-        entry.callback.AddListener((eventData) => { StartPlacingBuilding(newBuildingBtn); });
+        entry.callback.AddListener((eventData) => { StartPlacingBuilding(newBuildingBtn, id); });
         trigger.triggers.Add(entry);
-
-        //MenuManager.instance.ToggleBuildMenu();
-    }
-
-
-    
-}
-
-public enum E_BuildingType
-{
-    HOUSE,
-    FACTORY,
-    MEDIA
-
+    }  
 }
