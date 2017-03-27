@@ -15,6 +15,7 @@ public class PretendData : MonoBehaviour {
 public class DataInputTest
 {
     // public string BSdataName;
+
     public string BSDataName;
     public string BSDataAmount;
 }

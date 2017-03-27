@@ -41,7 +41,7 @@ public class BudgetOverview : MonoBehaviour {
 
     private void ActivateBudgetButton()
     {
-        new Hint("Sprites/Hints/LastBuildingPlacedHint", new Vector3(0, 450));
+        new Hint("Sprites/Hints/Hint5AfterAllBills", new Vector3(0, 450f, 0f));
         budgetButton.gameObject.SetActive(true);
     }
 }

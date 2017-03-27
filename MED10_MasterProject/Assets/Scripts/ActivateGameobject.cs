@@ -32,7 +32,7 @@ public class ActivateGameobject : MonoBehaviour {
         if (_firstTimePress)
         {
             //new Hint("Sprites/Hints/test1", Vector3.zero);
-            new Hint("Sprites/Hints/test2", new Vector3(0, 200, 200));
+            new Hint("Sprites/Hints/Hint2BillLayout", new Vector3(0, 200, 200));
             _firstTimePress = false;
         }
 

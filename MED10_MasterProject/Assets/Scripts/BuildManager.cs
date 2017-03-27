@@ -35,9 +35,13 @@ public class BuildManager : MonoBehaviour {
         BetalingsServiceData.newBill += CreateBuilding;
         Bill.LastBill += BillsDone;
         BetalingsServiceData.changedBill += ChangeBuilding;
-        placedBuildings = new Building[PretendData.instance.LasseTestData.Length];
+
         //for(int i = 0; i < PretendData.instance.LasseTestData.Length; )
         //Debug.Log(PretendData.instance.LasseTestData.Length);
+    }
+    private void Start()
+    {
+        placedBuildings = new Building[PretendData.instance.LasseTestData.Length];
     }
 
 
@@ -215,7 +219,7 @@ public class BuildManager : MonoBehaviour {
 
         if (_firstBuildingButton)
         {
-            new Hint("Sprites/Hints/FirstBuildingButtonHint", new Vector3(-100, -350f));
+            new Hint("Sprites/Hints/Hint3AfterFirstBill", new Vector3(0f, -350f)); //(-100,-350f)
             _firstBuildingButton = false;
         }
 

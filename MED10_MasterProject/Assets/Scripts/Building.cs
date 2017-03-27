@@ -406,7 +406,7 @@ public class Building : MonoBehaviour {
             //Show hints if necessary
             if (BuildManager.firstBuildingToBePlaced)
             {
-                new Hint("Sprites/Hints/FirstBuildingPlacedHint", new Vector3(0, 300));
+                new Hint("Sprites/Hints/Hint4AfterPlacementBuilding", new Vector3(0, 300f,0f));
                 BuildManager.firstBuildingToBePlaced = false;
             }
 
