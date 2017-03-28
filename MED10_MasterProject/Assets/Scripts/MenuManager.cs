@@ -16,7 +16,7 @@ public class MenuManager : MonoBehaviour {
     private void Awake()
     {
         instance = this;
-        achievementBtn.onClick.AddListener(() => ChangeMenu(E_MenuType.ACHIEVEMENTS));
+       // achievementBtn.onClick.AddListener(() => ChangeMenu(E_MenuType.ACHIEVEMENTS));
 
     }
 

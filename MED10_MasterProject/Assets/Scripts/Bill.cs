@@ -4,59 +4,57 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Bill : MonoBehaviour {
+public class Bill : MonoBehaviour
+{
 
-    public delegate void D_LastBill();
-    public static event D_LastBill LastBill;
+    public delegate void D_Bill();
+    public static event D_Bill LastBill;
+    public static event D_Bill BillFinished;
+
 
     public Text BillName;
     public InputField BillAmount;
-    public Dropdown Category;
-    public Dropdown SubCategory;
+    // public Dropdown Category;
+    // public Dropdown SubCategory;
     public ToggleGroup Frequency;
     public Button Finished;
 
-    private bool _isActive, _choseCategory,_choseSubCategory, _choseFrequency;
+    private bool _isActive, _choseCategory, _choseSubCategory, _choseFrequency;
     private BetalingsServiceData BPS;
-    private string _toggleNumber;
+    private string _toggleNumber, _categoryName, _subCategoryName;
     public List<Toggle> Toggles;
+    public Text CategoryText;
+    public int IDnum = -1;
 
 
     private void Awake()
     {
+        CategoryButton.CategoryPress += CategoryChosen;
         BPS = BetalingsServiceData.Instance;
         Frequency.allowSwitchOff = true;
         Finished.onClick.AddListener(() => AddToBPS());
-        Category.onValueChanged.AddListener(delegate { CategoryChosen(); });
-        SubCategory.onValueChanged.AddListener(delegate { SubCategoryChosen(); });
+        //Category.onValueChanged.AddListener(delegate { CategoryChosen(); });
+        //SubCategory.onValueChanged.AddListener(delegate { SubCategoryChosen(); });
         foreach (var togle in Toggles)
         {
             togle.onValueChanged.AddListener(delegate { GetActiveToggle(togle.isOn, togle); });
         }
     }
 
-    private void SubCategoryChosen()
+    public void EditBill(string category, string subCategory)
     {
-        if (SubCategory.value != 0)
-        {
-            _choseSubCategory = true;
-            FinishedBill();
-            return;
-        }
-        _choseSubCategory = false;
+        CategoryChosen(category, subCategory);
+
     }
 
-    
-    private void CategoryChosen()
-    {
-        if (Category.value != 0)
-        {
-            _choseCategory = true;
-            FinishedBill();
-            return;
-        }
-        _choseCategory = false;
 
+
+    private void CategoryChosen(string category, string subCatogry)
+    {
+        _categoryName = category;
+        _subCategoryName = subCatogry;
+        _choseCategory = true;
+        FinishedBill();
     }
 
     void GetActiveToggle(bool toggleOn, Toggle changedToggle)
@@ -67,7 +65,7 @@ public class Bill : MonoBehaviour {
             FinishedBill();
             _toggleNumber = changedToggle.name;
         }
-        if (!Frequency.AnyTogglesOn() )
+        if (!Frequency.AnyTogglesOn())
         {
             _choseFrequency = false;
             FinishedBill();
@@ -79,39 +77,47 @@ public class Bill : MonoBehaviour {
 
     private void AddToBPS()
     {
-        BPS.AddToCurrentExpenses(BillName.text, float.Parse(BillAmount.text), int.Parse(_toggleNumber), Category.captionText.text, SubCategory.captionText.text);
-        gameObject.SetActive(false);
-
-
-        var bills = GameObject.FindGameObjectsWithTag("Bill");
-        if (bills.Length > 1)
+        if (IDnum >= 0)
         {
-            foreach (var bill in bills)
-            {
-                if (bill.name == BillName.text)
-                {
-                    Destroy(bill);
-                    break;
-                }
-            }
+            BPS.CorrectExpenses(IDnum, BillName.text, float.Parse(BillAmount.text), int.Parse(_toggleNumber), _categoryName, _subCategoryName);
         }
         else
         {
-            Destroy(bills[0]);
-            LastBill();
-            ActivateGameobject.Instance.Interactable(false); 
+            BPS.AddToCurrentExpenses(BillName.text, float.Parse(BillAmount.text), int.Parse(_toggleNumber), _categoryName, _subCategoryName);
+            var bills = GameObject.FindGameObjectsWithTag("Bill");
+            if (bills.Length > 1)
+            {
+                foreach (var bill in bills)
+                {
+                    if (bill.name == BillName.text)
+                    {
+                        Destroy(bill);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                Destroy(bills[0]);
+                if (LastBill != null)
+                {
+                    LastBill();
+
+                }
+                ActivateGameobject.Instance.BillsFinished(false);
+            }
+            if (BillFinished != null)
+            {
+                BillFinished();
+            }
         }
-
-        transform.parent.gameObject.SetActive(false);
-
-        Destroy(this);
-        Debug.Log(BPS.GetPaymentservices(0).Info());
-
+       // gameObject.SetActive(false);
+        Destroy(gameObject);
     }
 
     void FinishedBill()
     {
-        if (_choseFrequency && _choseCategory &&_choseSubCategory)
+        if (_choseFrequency && _choseCategory)
         {
             Finished.interactable = true;
             return;

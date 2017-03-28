@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class ActivateGameobject : MonoBehaviour {
     public GameObject ActivateObject;
+    public Sprite Deactivated;
     private bool _firstTimePress = false;
 
     public static ActivateGameobject Instance = null;
@@ -20,8 +21,9 @@ public class ActivateGameobject : MonoBehaviour {
         _firstTimePress = true;
 
     }
-    public void Interactable(bool interact)
+    public void BillsFinished(bool interact)
     {
+        GetComponent<Image>().sprite = Deactivated;
         _button.interactable = interact;
     }
     void Pressed()
@@ -30,7 +32,7 @@ public class ActivateGameobject : MonoBehaviour {
         if (_firstTimePress)
         {
             //new Hint("Sprites/Hints/test1", Vector3.zero);
-            new Hint("Sprites/Hints/test2", new Vector3(0, 200, 200));
+            new Hint("Sprites/Hints/Hint2BillLayout", new Vector3(0, 200, 200));
             _firstTimePress = false;
         }
 

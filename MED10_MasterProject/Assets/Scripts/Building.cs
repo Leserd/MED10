@@ -5,17 +5,23 @@ using UnityEngine;
 public class Building : MonoBehaviour {
 
     public int buildingSize;
+    public int ID;      //ID of the bill this building represents
     public float buildTime;
     public E_BuildingStatus status;
     public bool possibleToBuild = false;
+    private bool selected = false;
     private SpriteRenderer sprite;
     private Color colorDefault = Color.white;
     private Color colorPossible = new Color(0, 1, 0, 0.5f);
     private Color colorImpossible = new Color(1, 0, 0, 0.5f);
-    private Color halfTransparent = new Color(1, 1, 1, 0.4f);
+    private Color colorSelected = Color.cyan;
+    private Color halfTransparent = new Color(1, 1, 1, 0.5f);
     private Color fullTransparent = new Color(1, 1, 1, 0.0f);
     private List<Tile> touchingTiles;
     private Tile hoveredTile;
+
+    private bool showBuildingStatus;
+
 
 
 
@@ -25,9 +31,19 @@ public class Building : MonoBehaviour {
         sprite.sortingOrder = 10;   //Sorting order will be changed when the building is placed on a tile
         sprite.color = halfTransparent;
         touchingTiles = new List<Tile>();
+
+        BuildManager.StartIgnoreRaycast += StartIgnoreRaycast;
+        BuildManager.StopIgnoreRaycast += StopIgnoreRaycast;
+
+        PlayerControls.SelectObject += Select;
     }
 
-
+    private void OnDestroy()
+    {
+        PlayerControls.SelectObject -= Select;
+        BuildManager.StartIgnoreRaycast -= StartIgnoreRaycast;
+        BuildManager.StopIgnoreRaycast -= StopIgnoreRaycast;
+    }
 
     private void Update()
     {
@@ -86,6 +102,98 @@ public class Building : MonoBehaviour {
         sprite.sortingOrder = CalculateSortingOrder();
     }
 
+
+
+    public void Select(GameObject obj)
+    {
+        bool select = true; //Should this object be selected
+
+        if (obj == null)
+        {
+            select = false;
+        }
+        else if(obj != gameObject)
+        {
+            if (obj.tag == "Tile")
+            {
+                if (touchingTiles.Contains(obj.GetComponent<Tile>()))
+                {
+                    select = true;
+                }
+                else
+                {
+                    select = false;
+                }
+            }
+            else
+            {
+                select = false;
+            }
+        }
+
+        if (select)
+        {
+            if (selected) //was it already selected?
+            {
+                return;
+            }
+            else
+            {
+                //Debug.Log("Selected " + gameObject.name);
+                selected = true;
+                ToggleHighlight(true);
+
+                foreach (Tile tile in touchingTiles)
+                {
+                    tile.Select(tile.gameObject);
+                }
+            }
+        }
+        else
+        {
+            if(selected)    //only deselect if it was currently selected
+                Deselect();
+        }
+
+
+        //if ((obj == null || (obj != gameObject && (obj.tag == "Tile" && !touchingTiles.Contains(obj.GetComponent<Tile>())))) && selected)
+        //{
+        //    Deselect();
+        //}
+        //else if ((obj == gameObject || (obj.tag == "Tile" && touchingTiles.Contains(obj.GetComponent<Tile>()))) && !selected)
+        //{
+        //    Debug.Log("Selected " + gameObject.name);
+        //    selected = true;
+
+        //    foreach (Tile tile in touchingTiles)
+        //    {
+        //        print(tile.gameObject);
+        //        tile.Select(tile.gameObject);
+        //    }
+        //}
+    }
+
+
+
+    public void Deselect()
+    {
+        //Debug.Log("Deselected " + gameObject.name);
+        ToggleHighlight(false);
+        selected = false;
+    }
+
+
+    public void ToggleHighlight(bool show)
+    {
+        showBuildingStatus = show;
+        if (showBuildingStatus)
+            if (selected)
+                sprite.color = colorSelected;
+            else
+                sprite.color = colorDefault;
+        else
+            sprite.color = colorDefault;
+    }
 
 
     private Vector3 CalculatePosition()
@@ -154,8 +262,6 @@ public class Building : MonoBehaviour {
     public IEnumerator Build()
     {
         sprite.color = Color.white;
-
-        GetComponent<EdgeCollider2D>().enabled = false;
 
         float startTime = Time.time;
         float endTime = startTime + buildTime;
@@ -296,11 +402,44 @@ public class Building : MonoBehaviour {
             BuildManager.instance.RemoveActiveBuildButton();
 
             ChangeStatus(E_BuildingStatus.BEING_BUILT);
+
+            //Show hints if necessary
+            if (BuildManager.firstBuildingToBePlaced)
+            {
+                new Hint("Sprites/Hints/Hint4AfterPlacementBuilding", new Vector3(0, 300f,0f));
+                BuildManager.firstBuildingToBePlaced = false;
+            }
+
+            BuildManager.instance.BuildingHasBeenPlaced(this, ID);
         }
         else
         {
             BuildManager.instance.CancelBuild();
         }
+    }
+
+
+
+
+    private void StartIgnoreRaycast()
+    {
+        //Set layer to IgnoreRaycast
+        gameObject.layer = 2;
+
+        //Make building transparent so the tiles behind can be seen
+        sprite.color = halfTransparent;
+    }
+
+
+
+
+    private void StopIgnoreRaycast()
+    {
+        //Set layer to default
+        gameObject.layer = 0;
+
+        //Make building opaque again
+        sprite.color = colorDefault;
     }
 }
 
