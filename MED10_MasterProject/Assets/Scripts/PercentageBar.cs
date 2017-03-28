@@ -22,13 +22,10 @@ public class PercentageBar : MonoBehaviour {
         _resize = true;
     }
 
-	// Use this for initialization
-	void Awake () {
-        RectSize = transform as RectTransform;
-		
+    void Awake () {
+        RectSize = transform as RectTransform;		
 	}
 	
-	// Update is called once per frame
 	void FixedUpdate () {
         if (_resize)
         {
@@ -47,14 +44,5 @@ public class PercentageBar : MonoBehaviour {
         {
             _resize = false;
         }
-        /*
-        var time = 0f;
-        while (time < 1f)
-        {
-            //Debug.Log(time);
-            time += Time.deltaTime;
-            RectSize.sizeDelta = Vector2.Lerp(_curentSize, new Vector2(Size, RectSize.rect.height), time);
-        }*/
-        //Resized = false;
     }
 }

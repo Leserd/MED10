@@ -7,27 +7,32 @@ public class AddMoneyToBar : MonoBehaviour
 {
 
     public GameObject PercentageBarPrefab;
+    [SerializeField]
+    private Text avgMonthly, ApartmentPercentage, MediaPercentage, OtherPercentage;
     private const float MAX_VALUE = 950f;
     private float _totalMoneyAdded = 0;
     private List<GameObject> _addedBills = new List<GameObject>();
-    Dictionary<string, Color> BarColors = new Dictionary<string, Color>()
+    private float _totalApartment = 0, _totalMedia = 0, _totalOther = 0;
+
+
+    public static Dictionary<string, Color> BarColors = new Dictionary<string, Color>()
             {
-                { "Abonnement", Color.green },
-                { "Lån", Color.green},
-                { "Forsikring", Color.green },
-                { "Fritid", Color.green},
-                { "Transport", Color.green},
-                { "Personlig Pleje", Color.green },
-                { "Andet", Color.green},
+                { "Abonnement", Color.blue},
+                { "Lån", Color.blue},
+                { "Forsikring", Color.blue },
+                { "Fritid", Color.blue},
+                { "Transport", Color.blue},
+                { "Personlig Pleje", Color.blue },
+                { "Andet", Color.blue},
                 { "Internet", Color.red},
                 { "TV", Color.red},
                 { "Mobil", Color.red},
                 { "Licens", Color.red},
-                { "Husleje", Color.blue},
-                { "Varme", Color.blue},
-                { "El", Color.blue},
-                { "Vand", Color.blue},
-                { "Gas", Color.blue}
+                { "Husleje", Color.green},
+                { "Varme", Color.green},
+                { "El", Color.green},
+                { "Vand", Color.green},
+                { "Gas", Color.green}
             };
 
 
@@ -55,6 +60,40 @@ public class AddMoneyToBar : MonoBehaviour
         percentage.BillAmount = addedData.MonthlyExpence;
         _addedBills.Add(bar);
         ResizePercentageBar();
+        ChangePercentage(addedData.Category, addedData.MonthlyExpence);
+
+    }
+
+    void ChangePercentage(string category, float changeValue)
+    {
+        switch (category)
+        {
+            case "Bolig":
+                _totalApartment += changeValue;
+               
+                break;
+            case "Medier":
+                _totalMedia += changeValue;
+                
+                break;
+            case "Andet":
+                _totalOther += changeValue;
+                
+                break;
+
+            default:
+                break;
+        }
+        ApartmentPercentage.text = (_totalApartment / _totalMoneyAdded * 100).ToString() + "%|";
+        MediaPercentage.text = (_totalMedia / _totalMoneyAdded * 100).ToString() + "%|";
+        OtherPercentage.text = (_totalOther / _totalMoneyAdded * 100).ToString() + "%|";
+
+    }
+
+    void ChangePercentage(string changedCategory, float changedValue, string newCategory,float newValue)
+    {
+        ChangePercentage(changedCategory, -changedValue);
+        ChangePercentage(newCategory, newValue);
     }
 
     void ResizePercentageBar()
@@ -65,9 +104,12 @@ public class AddMoneyToBar : MonoBehaviour
             bar.Size = (bar.BillAmount / _totalMoneyAdded) * MAX_VALUE;
             bar.Resize();
         }
+        avgMonthly.text = _totalMoneyAdded.ToString();
+
     }
     private void ChangeBill(BetalingsServiceData.BSData changedData)
     {
+        ChangePercentage(_currentAddedBill[changedData.ID].Category, _currentAddedBill[changedData.ID].MonthlyExpence, changedData.Category, changedData.MonthlyExpence);            
         _totalMoneyAdded += changedData.MonthlyExpence - _currentAddedBill[changedData.ID].MonthlyExpence;
         _currentAddedBill[changedData.ID] = changedData;
         var bar = _addedBills[changedData.ID];
