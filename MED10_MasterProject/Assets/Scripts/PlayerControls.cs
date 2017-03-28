@@ -21,6 +21,9 @@ public class PlayerControls : MonoBehaviour
     public delegate void D_ClearSelection();
     public static event D_ClearSelection ClearSelection;
 
+    public delegate void D_Click();
+    public static event D_Click DestroyActiveHints;
+
     //****Touch variables
     public E_TouchStatus TouchStatus { get; set; }
     public Vector2[] touchPosBegin, touchPosCurrent, touchPosLast;
@@ -105,6 +108,14 @@ public class PlayerControls : MonoBehaviour
         //If pointer is above UI object, reset stored pointer position so it does not create errors next time user touches screen
         else
         {
+            if (Input.GetMouseButtonDown(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began))
+            {
+                if (DestroyActiveHints != null)
+                {
+                    DestroyActiveHints();
+                }
+            }
+
             Vector2 pos = Vector2.zero;
             if (GameManager.IsApp)
             {
@@ -131,6 +142,11 @@ public class PlayerControls : MonoBehaviour
     //User touches screen with finger/mouse 
     private void TouchBegin()
     {
+        if(DestroyActiveHints != null)
+        {
+            DestroyActiveHints();
+        }
+
         if (GameManager.IsApp)
         {
             //store position of all touch inputs
