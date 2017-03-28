@@ -220,7 +220,7 @@ public class SwipeMenu : MonoBehaviour {
     public void StartGame()
     {
         gameObject.SetActive(false);
-        new Hint("Sprites/Hints/Hint1NewMayorBill", new Vector3(0,580f,0)); //(140f,580f,0)
+        new Hint("Sprites/Hints/Hint1NewMayorBill", new Vector3(0,300f,0)); //(140f,580f,0)
     }
 
 
