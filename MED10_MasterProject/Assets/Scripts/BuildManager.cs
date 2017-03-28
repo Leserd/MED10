@@ -9,14 +9,15 @@ public class BuildManager : MonoBehaviour {
     public static BuildManager instance;
 	public static GameObject buildingToBuild { get; set; }              //Building (prefab) the player is currenty trying to place 
     public static GameObject activeBuildButton;                         //Building (button) the player is currently trying to place
-    public static Vector3 buildingOffset = new Vector3(-0.03f, 0.4f, 0);    //Offset for buildings so they are correctly shown on tiles
+    public static Vector3 buildingOffset = new Vector3(0f, 0.32f, 0);   //Offset for buildings so they are correctly shown on tiles
+    //public static Vector3 buildingOffset = new Vector3(-0.03f, 0.4f, 0);    //Offset for buildings so they are correctly shown on tiles
     public List<Button> availableBuildings = new List<Button>();        //List of buttons available on the Build bar
     public Building[] placedBuildings;
     public GameObject buildingBtnPrefab;                                //Prefab of a building button
     public Transform buildingBtnParent;                                 //The Transform to which all building buttons will be a child
     public GameObject cancelArea;                                       //The area in which the player can drop a building if he does not want to place it anyway
     private bool _firstBuildingButton = true;                           //Should we show the hint when button is created
-    public static bool firstBuildingToBePlaced = true;                 //Should we show a hint when the first building is created ("There are more bills")
+    public static bool firstBuildingToBePlaced = true;                  //Should we show a hint when the first building is created ("There are more bills")
     public static bool billsDone = false;
 
     public delegate void D_LastBuildingPlaced();
@@ -35,11 +36,15 @@ public class BuildManager : MonoBehaviour {
         BetalingsServiceData.newBill += CreateBuilding;
         Bill.LastBill += BillsDone;
         BetalingsServiceData.changedBill += ChangeBuilding;
-        placedBuildings = new Building[PretendData.instance.LasseTestData.Length];
         //for(int i = 0; i < PretendData.instance.LasseTestData.Length; )
         //Debug.Log(PretendData.instance.LasseTestData.Length);
     }
 
+    private void Start()
+    {
+        placedBuildings = new Building[PretendData.instance.LasseTestData.Length];
+
+    }
 
 
     void CreateBuilding(BetalingsServiceData.BSData data)
