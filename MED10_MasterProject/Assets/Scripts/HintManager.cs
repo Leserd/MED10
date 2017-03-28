@@ -4,16 +4,29 @@ using UnityEngine;
 
 public class HintManager : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        if (Input.GetKeyDown(KeyCode.H))
+    private List<Hint> activeHints = new List<Hint>();
+    public static HintManager instance;
+
+    private void Awake()
+    {
+        instance = this;
+        PlayerControls.DestroyActiveHints += DestroyActiveHints;
+    }
+    
+
+    public void AddActiveHint(Hint hint)
+    {
+        activeHints.Add(hint);
+    }
+
+
+    public void DestroyActiveHints()
+    {
+        foreach(Hint hint in activeHints)
         {
-            new Hint("Sprites/Hints/VelkomstBaggrund", new Vector3(50,-50,0));
+            hint.DestroyHint();
         }
-	}
+
+        activeHints.Clear();
+    }
 }
