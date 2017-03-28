@@ -8,6 +8,7 @@ public class Hint {
     private Sprite _sprite;
     private Button _hintObj;
    
+   
     //Mangler mulighed for at sige hvad beskeden er
 
     public Hint(string spritePath, Vector3 position)
@@ -28,6 +29,9 @@ public class Hint {
 
         //Enable hint
         ShowHint();
+
+        //Add to hintmanager activehints
+        HintManager.instance.AddActiveHint(this);
 
     }
 

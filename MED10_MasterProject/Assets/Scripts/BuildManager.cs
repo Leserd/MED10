@@ -9,7 +9,8 @@ public class BuildManager : MonoBehaviour {
     public static BuildManager instance;
 	public static GameObject buildingToBuild { get; set; }              //Building (prefab) the player is currenty trying to place 
     public static GameObject activeBuildButton;                         //Building (button) the player is currently trying to place
-    public static Vector3 buildingOffset = new Vector3(-0.03f, 0.4f, 0);    //Offset for buildings so they are correctly shown on tiles
+    //public static Vector3 buildingOffset = new Vector3(-0.03f, 0.4f, 0);    //Offset for buildings so they are correctly shown on tiles
+    public static Vector3 buildingOffset = new Vector3(0f, 0.31f, 0);    //Offset for buildings so they are correctly shown on tiles
     public List<Button> availableBuildings = new List<Button>();        //List of buttons available on the Build bar
     public Building[] placedBuildings;
     public GameObject buildingBtnPrefab;                                //Prefab of a building button
