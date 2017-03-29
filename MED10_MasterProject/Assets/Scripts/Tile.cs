@@ -30,11 +30,9 @@ public class Tile : MonoBehaviour {
         if (TileStatus == E_TileStatus.EMPTY)
         {
             colorStatus = colorEmpty;
-            _collider.enabled = true;
         }
         else
         {
-            _collider.enabled = false;
             colorStatus = colorFull;
         }
 
@@ -141,12 +139,10 @@ public class Tile : MonoBehaviour {
         {
             case E_TileStatus.EMPTY:
                 colorStatus = colorEmpty;
-                _collider.enabled = true;
                 TileStatus = E_TileStatus.EMPTY;
                 break;
             case E_TileStatus.FULL:
                 colorStatus = colorFull;
-                _collider.enabled = false;
                 TileStatus = E_TileStatus.FULL;
                 break;
         }
