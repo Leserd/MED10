@@ -11,7 +11,7 @@ public class SelectDate : MonoBehaviour {
     [SerializeField]
     private GameObject Parent;
     [SerializeField]
-    private InputField _date, _year,_month;
+    private InputField _date, _year = null,_month = null;
 
     private void Awake()
     {

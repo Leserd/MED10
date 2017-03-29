@@ -11,7 +11,7 @@ public class CalenderDate : MonoBehaviour {
 
     private string _currentInput;
     private InputField _calenderField;
-    private string _month = "MM", _year = "YYYY", _seperator = " / ";
+    private string  _seperator = " / ";
     private string _calenderString;
 
     public string[] CalenderAttempt = { "DD", "MM", "YYYY" };

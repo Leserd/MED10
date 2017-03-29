@@ -28,7 +28,6 @@ public class LoadBill : MonoBehaviour {
 
     void LookAtBill(DataInputTest testBill)
     {
-        Debug.Log("Clicked on bill for " + testBill.BSDataName);
         var billStart = Instantiate(Bill, Vector3.zero, Bill.transform.rotation);
         billStart.name = testBill.BSDataName;
         billStart.transform.SetParent(transform, false);

@@ -10,6 +10,7 @@ public class PretendData : MonoBehaviour {
     {
         instance = this;
     }
+    
 }
 [System.Serializable]
 public class DataInputTest
