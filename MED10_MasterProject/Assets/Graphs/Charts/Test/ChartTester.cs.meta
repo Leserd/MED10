@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 08ae36f6fb673e442af8d0f60eda1fec
+timeCreated: 1477646789
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - pieChartPrefab: {fileID: 1000012521820658, guid: 009bf3f45f8c1d14eb39b71a85634973,
+      type: 2}
+  - barChartPrefab: {fileID: 1000010477069260, guid: a81ca7901d648594eafe7da10ad4ee9e,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

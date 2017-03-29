@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PieGraph : MonoBehaviour {
+public class PieGraphTest : MonoBehaviour {
 
     private float[] values;
     public Color[] wedgeColors;
