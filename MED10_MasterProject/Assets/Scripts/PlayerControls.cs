@@ -116,6 +116,12 @@ public class PlayerControls : MonoBehaviour
                 }
             }
 
+            if (Input.GetMouseButtonUp(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended))
+            {
+                if (SelectObject != null)
+                    SelectObject(null);      //if it is null (raycast hit nothing), then everything will be deselected.
+            }
+
             Vector2 pos = Vector2.zero;
             if (GameManager.IsApp)
             {
@@ -345,7 +351,8 @@ public class PlayerControls : MonoBehaviour
         switch (TouchStatus)
         {
             case E_TouchStatus.IDLE:
-                SelectObject(obj);      //if it is null (raycast hit nothing), then everything will be deselected.
+                if(SelectObject != null)
+                    SelectObject(obj);      //if it is null (raycast hit nothing), then everything will be deselected.
                 break;
             case E_TouchStatus.BUILD:
                 if (obj.GetComponent<Tile>() && obj.GetComponent<Tile>().TileStatus == E_TileStatus.EMPTY)

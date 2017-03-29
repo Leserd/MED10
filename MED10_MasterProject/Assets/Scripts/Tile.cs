@@ -18,14 +18,25 @@ public class Tile : MonoBehaviour {
     private Color colorStatus;
     private bool selected = false;
     public int x, y;
-
+    private PolygonCollider2D _collider;
     
 
     void Awake() {
-        if (TileStatus == E_TileStatus.EMPTY)
-            colorStatus = colorEmpty;
+        if (GetComponent<PolygonCollider2D>())
+            _collider = GetComponent<PolygonCollider2D>();
         else
+            Debug.LogWarning(transform.name + " has no PolygonCollider2D. Will cause errors.");
+
+        if (TileStatus == E_TileStatus.EMPTY)
+        {
+            colorStatus = colorEmpty;
+            _collider.enabled = true;
+        }
+        else
+        {
+            _collider.enabled = false;
             colorStatus = colorFull;
+        }
 
         sprite = GetComponent<SpriteRenderer>();
         TileManager.ToggleTileStatus += ToggleHighlight;
@@ -130,10 +141,12 @@ public class Tile : MonoBehaviour {
         {
             case E_TileStatus.EMPTY:
                 colorStatus = colorEmpty;
+                _collider.enabled = true;
                 TileStatus = E_TileStatus.EMPTY;
                 break;
             case E_TileStatus.FULL:
                 colorStatus = colorFull;
+                _collider.enabled = false;
                 TileStatus = E_TileStatus.FULL;
                 break;
         }
@@ -190,6 +203,7 @@ public class Tile : MonoBehaviour {
     public void AssignBuilding(Building building)
     {
         attachedBuilding = building;
+        _collider.enabled = false;
     }
 
 

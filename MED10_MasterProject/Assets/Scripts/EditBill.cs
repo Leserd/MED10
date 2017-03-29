@@ -24,10 +24,11 @@ public class EditBill : MonoBehaviour {
             IDnum = building.GetComponent<Building>().ID;
             var data = BetalingsServiceData.Instance.GetPaymentservices(IDnum);
             var textFields = GetComponentsInChildren<Text>();
-            textFields[0].text = data.TransactionName;
-            textFields[1].text = data.Expense.ToString();
-            textFields[2].text = "Årlige betalinger: " +data.PaymentsPerYear.ToString();
-            textFields[3].text = data.SubCategory;
+            textFields[0].text = "Edit";
+            textFields[1].text = data.TransactionName;
+            textFields[2].text = data.Expense.ToString();
+            textFields[3].text = "Årlige betalinger: " +data.PaymentsPerYear.ToString();
+            textFields[4].text = data.SubCategory;
             return;
         }
         EditBillBar.SetActive(false);
