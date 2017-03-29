@@ -14,32 +14,26 @@ public class AddMoneyToBar : MonoBehaviour
     private List<GameObject> _addedBills = new List<GameObject>();
     private float _totalApartment = 0, _totalMedia = 0, _totalOther = 0;
 
-
     public static Dictionary<string, Color> BarColors = new Dictionary<string, Color>()
             {
-                { "Abonnement", new Color(63f,115f,178f)},
-                { "Lån", new Color(63f,115f,178f)},
-                { "Forsikring", new Color(63f,115f,178f) },
-                { "Fritid", new Color(63f,115f,178f)},
-                { "Transport", new Color(63f,115f,178f)},
-                { "Personlig Pleje", new Color(63f,115f,178f) },
-                { "Andet", new Color(63f,115f,178f)},
-                { "Internet", new Color(207f,52f,52f)},
-                { "TV", new Color(207f,52f,52f)},
-                { "Mobil", new Color(207f,52f,52f)},
-                { "Licens", new Color(207f,52f,52f)},
-                { "Husleje", new Color(117f,180f,61f)},
-                { "Varme", new Color(117f,180f,61f)},
-                { "El", new Color(117f,180f,61f)},
-                { "Vand", new Color(117f,180f,61f)},
-                { "Gas", new Color(117f,180f,61f)}
+                { "Abonnement", new Color(63f/255,115f/255,178f/255)},
+                { "Lån",  new Color(63f/255,115f/255,178f/255)},
+                { "Forsikring", new Color(63f/255,115f/255,178f/255)},
+                { "Fritid",  new Color(63f/255,115f/255,178f/255)},
+                { "Transport",  new Color(63f/255,115f/255,178f/255)},
+                { "Personlig Pleje", new Color(63f/255,115f/255,178f/255)},
+                { "Andet",  new Color(63f/255,115f/255,178f/255)},
+                { "Internet", new Color(207f/255,52f/255,52f/255)},
+                { "TV", new Color(207f/255,52f/255,52f/255)},
+                { "Mobil", new Color(207f/255,52f/255,52f/255)},
+                { "Licens", new Color(207f/255,52f/255,52f/255)},
+                { "Husleje", new Color(117f/255,180f/255,61f/255)},
+                { "Varme", new Color(117f/255,180f/255,61f/255)},
+                { "El", new Color(117f/255,180f/255,61f/255)},
+                { "Vand",new Color(117f/255,180f/255,61f/255)},
+                { "Gas", new Color(117f/255,180f/255,61f/255)}
             };
 
-
-
-    //BarColors.add("test",Color.Black);
-
-    //Det er muligt at man kan nøjes med expenseMonth
     List<BetalingsServiceData.BSData> _currentAddedBill = new List<BetalingsServiceData.BSData>();
 
 
