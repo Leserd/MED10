@@ -78,9 +78,9 @@ public class AddMoneyToBar : MonoBehaviour
             default:
                 break;
         }
-        ApartmentPercentage.text = (_totalApartment / _totalMoneyAdded * 100).ToString() + "%|";
-        MediaPercentage.text = (_totalMedia / _totalMoneyAdded * 100).ToString() + "%|";
-        OtherPercentage.text = (_totalOther / _totalMoneyAdded * 100).ToString() + "%|";
+        ApartmentPercentage.text = (_totalApartment / _totalMoneyAdded * 100).ToString("F0") + "%|";
+        MediaPercentage.text = (_totalMedia / _totalMoneyAdded * 100).ToString("F0") + "%|";
+        OtherPercentage.text = (_totalOther / _totalMoneyAdded * 100).ToString("F0") + "%|";
 
     }
 
@@ -98,7 +98,7 @@ public class AddMoneyToBar : MonoBehaviour
             bar.Size = (bar.BillAmount / _totalMoneyAdded) * MAX_VALUE;
             bar.Resize();
         }
-        avgMonthly.text = _totalMoneyAdded.ToString();
+        avgMonthly.text = _totalMoneyAdded.ToString("F0") + " kr";
 
     }
     private void ChangeBill(BetalingsServiceData.BSData changedData)

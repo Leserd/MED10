@@ -87,6 +87,8 @@ public class Building : MonoBehaviour {
             if (touchingTiles.Count > 0)
                 ToggleHighlightOnTouchingTiles(false);
 
+            touchingTiles.Clear();
+
             Plane plane = new Plane(Vector3.back, Vector3.zero);
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             float hitdist = 0.0f;
