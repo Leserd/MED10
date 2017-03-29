@@ -8,7 +8,7 @@ public class AddMoneyToBar : MonoBehaviour
 
     public GameObject PercentageBarPrefab;
     [SerializeField]
-    private Text avgMonthly, ApartmentPercentage, MediaPercentage, OtherPercentage;
+    private Text avgMonthly, ApartmentPercentage = null, MediaPercentage = null, OtherPercentage = null;
     private const float MAX_VALUE = 950f;
     private float _totalMoneyAdded = 0;
     private List<GameObject> _addedBills = new List<GameObject>();
