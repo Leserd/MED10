@@ -17,22 +17,22 @@ public class AddMoneyToBar : MonoBehaviour
 
     public static Dictionary<string, Color> BarColors = new Dictionary<string, Color>()
             {
-                { "Abonnement", Color.blue},
-                { "Lån", Color.blue},
-                { "Forsikring", Color.blue },
-                { "Fritid", Color.blue},
-                { "Transport", Color.blue},
-                { "Personlig Pleje", Color.blue },
-                { "Andet", Color.blue},
-                { "Internet", Color.red},
-                { "TV", Color.red},
-                { "Mobil", Color.red},
-                { "Licens", Color.red},
-                { "Husleje", Color.green},
-                { "Varme", Color.green},
-                { "El", Color.green},
-                { "Vand", Color.green},
-                { "Gas", Color.green}
+                { "Abonnement", new Color(63f,115f,178f)},
+                { "Lån", new Color(63f,115f,178f)},
+                { "Forsikring", new Color(63f,115f,178f) },
+                { "Fritid", new Color(63f,115f,178f)},
+                { "Transport", new Color(63f,115f,178f)},
+                { "Personlig Pleje", new Color(63f,115f,178f) },
+                { "Andet", new Color(63f,115f,178f)},
+                { "Internet", new Color(207f,52f,52f)},
+                { "TV", new Color(207f,52f,52f)},
+                { "Mobil", new Color(207f,52f,52f)},
+                { "Licens", new Color(207f,52f,52f)},
+                { "Husleje", new Color(117f,180f,61f)},
+                { "Varme", new Color(117f,180f,61f)},
+                { "El", new Color(117f,180f,61f)},
+                { "Vand", new Color(117f,180f,61f)},
+                { "Gas", new Color(117f,180f,61f)}
             };
 
 
